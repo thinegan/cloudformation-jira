@@ -104,29 +104,29 @@ Resources:
 
   MyS3Bucket:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    #Condition: "UseProdEnv"
     Properties:
       TemplateURL: !Sub "${PMTemplateURL}/atlassian-s3bucket.yaml"
       TimeoutInMinutes: '5'
       Parameters:
         PMServerEnv: !Ref "AWS::StackName"
 
-  # MyVPC:
-  #   Type: "AWS::CloudFormation::Stack"
-  #   Condition: "UseProdEnv"
-  #   DependsOn:
-  #   - "MyS3Bucket"
-  #   Properties:
-  #     TemplateURL: !Sub "${PMTemplateURL}/atlassian-vpc.yaml"
-  #     TimeoutInMinutes: '5'
-  #     Parameters:
-  #       PMServerEnv: !Ref "AWS::StackName"
-  #       PMVpcCIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMVpcCIDR"]
-  #       PMPublicSubnet1CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPublicSubnet1CIDR"]
-  #       PMPublicSubnet2CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPublicSubnet2CIDR"]
-  #       PMPrivateSubnet1CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPrivateSubnet1CIDR"]
-  #       PMPrivateSubnet2CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPrivateSubnet2CIDR"]
-  #       PMFlowLogRole: !GetAtt "MyIAMRole.Outputs.VPCFlowLogRoleArn"
+  MyVPC:
+    Type: "AWS::CloudFormation::Stack"
+    #Condition: "UseProdEnv"
+    DependsOn:
+    - "MyS3Bucket"
+    Properties:
+      TemplateURL: !Sub "${PMTemplateURL}/atlassian-vpc.yaml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
+        PMVpcCIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMVpcCIDR"]
+        PMPublicSubnet1CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPublicSubnet1CIDR"]
+        PMPublicSubnet2CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPublicSubnet2CIDR"]
+        PMPrivateSubnet1CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPrivateSubnet1CIDR"]
+        PMPrivateSubnet2CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPrivateSubnet2CIDR"]
+        PMFlowLogRole: !GetAtt "MyIAMRole.Outputs.VPCFlowLogRoleArn"
 
   # MySecurityGroup:
   #   Type: "AWS::CloudFormation::Stack"
