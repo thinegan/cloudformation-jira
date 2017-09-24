@@ -102,14 +102,14 @@ Resources:
       Parameters:
         PMServerEnv: !Ref "AWS::StackName"
 
-  # MyS3Bucket:
-  #   Type: "AWS::CloudFormation::Stack"
-  #   Condition: "UseProdEnv"
-  #   Properties:
-  #     TemplateURL: !Sub "${PMTemplateURL}/atlassian-s3bucket.yaml"
-  #     TimeoutInMinutes: '5'
-  #     Parameters:
-  #       PMServerEnv: !Ref "AWS::StackName"
+  MyS3Bucket:
+    Type: "AWS::CloudFormation::Stack"
+    Condition: "UseProdEnv"
+    Properties:
+      TemplateURL: !Sub "${PMTemplateURL}/atlassian-s3bucket.yaml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
 
   # MyVPC:
   #   Type: "AWS::CloudFormation::Stack"
