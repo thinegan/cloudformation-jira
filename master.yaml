@@ -1,0 +1,252 @@
+# Note : The Cloudformation Security Group IP address is open by default (testing purpose).
+# You should update Security Group Access with your own IP Address to ensure your instances security.
+#
+# Prerequisites
+# Before you can start this process, you need the following:
+# - Your AWS account must have one VPC available to be created in the selected region
+# - Amazon EC2 key pair
+# - Installed Domain in Route 53.
+#
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+    This is a master template to create a Atlassian Jira and Atlassian Bamboo.
+
+    Last Modified: 24th September 2017
+    Author: Thinegan Ratnam <thinegan@thinegan.com>
+
+###############################################################################################################
+
+Parameters: 
+
+  PMOWNIP:
+    Default: "0.0.0.0/0"
+    Description: "Update this with your own office/home public ip address"
+    Type: "String"
+
+  PMKeyName:
+    Default: "mk2acc-nv"
+    Description: "Enter an existing EC2 KeyPair. Default is mk2acc-nv."
+    Type: "String" 
+
+  PMTemplateURL:
+    Default: "https://s3.amazonaws.com/cf-templates-hyv79l0oex7c-us-east-1/cloudformation-atlassian/infrastructure"
+    Description: "Trying running from own directory/workstation."
+    Type: "String"
+
+  PMHostedZone:
+    Default: "moneylion.io"
+    Description: "Enter an existing Hosted Zone."
+    Type: "String"
+
+  PMInstanceType: 
+    Description: "Enter t2.micro or m1.small. Default is m4.xlarge."
+    Type: "String"
+    Default: "m4.xlarge"
+    AllowedValues: 
+      - "t2.micro"
+      - "m1.small"
+      - "m4.xlarge"
+      - "m4.xlarge"
+
+  PMMongoMaster:
+    Description: "Enter Mongo available instance type. Default is m4.large."
+    Type: "String"
+    Default: "m4.large"
+    AllowedValues: 
+      - "t2.medium"
+      - "m3.medium"
+      - "m4.large"
+      - "m4.xlarge"
+
+  PMMongoSecondary:
+    Description: "Enter Mongo available instance type. Default is m4.large."
+    Type: "String"
+    Default: "m4.large"
+    AllowedValues: 
+      - "t2.medium"
+      - "m3.medium"
+      - "c3.large"
+      - "m4.large"
+
+####### Condition Setup #######
+Conditions:
+  UseProdEnv: !Equals [ !Ref "PMInstanceType", "prod" ]
+
+###############################################################################################################
+#
+# For any additional region & Env, you can add by yourself below.
+Mappings:
+  EnvMap:
+
+    dev:
+      DomainMongoMaster: "dev-mongoms1.cfm.moneylion.com"
+      DomainMongoSecondary1: "dev-mongorep1.cfm.moneylion.com"
+      DomainMongoSecondary2: "dev-mongorep2.cfm.moneylion.com"
+      # DomainMongoMaster: "dev-mongoms1.moneylion.io"
+      # DomainMongoSecondary1: "dev-mongorep1.moneylion.io"
+      # DomainMongoSecondary2: "dev-mongorep2.moneylion.io"
+      MongoReplicatesetName: "devcloudrep"
+      PMFortinetInstanceType: "m3.medium"
+      PMVpcCIDR: "10.0.0.0/16"
+      PMPublicSubnet1CIDR: "10.0.1.0/24"
+      PMPublicSubnet2CIDR: "10.0.2.0/24"
+      PMPrivateSubnet1CIDR: "10.0.3.0/24"
+      PMPrivateSubnet2CIDR: "10.0.4.0/24"
+
+    staging:
+      DomainMongoMaster: "staging-mongoms1.cfm.moneylion.com"
+      DomainMongoSecondary1: "staging-mongorep1.cfm.moneylion.com"
+      DomainMongoSecondary2: "staging-mongorep2.cfm.moneylion.com"
+      # DomainMongoMaster: "staging-mongoms1.moneylion.io"
+      # DomainMongoSecondary1: "staging-mongorep1.moneylion.io"
+      # DomainMongoSecondary2: "staging-mongorep2.moneylion.io"
+      MongoReplicatesetName: "stagingcloudrep"
+      PMFortinetInstanceType: "m3.medium"
+      PMVpcCIDR: "10.1.0.0/16"
+      PMPublicSubnet1CIDR: "10.1.1.0/24"
+      PMPublicSubnet2CIDR: "10.1.2.0/24"
+      PMPrivateSubnet1CIDR: "10.1.3.0/24"
+      PMPrivateSubnet2CIDR: "10.1.4.0/24"
+
+    prod:
+      DomainMongoMaster: "prod-mongoms1.moneylion.io"
+      DomainMongoSecondary1: "prod-mongorep1.moneylion.io"
+      DomainMongoSecondary2: "prod-mongorep2.moneylion.io"
+      MongoReplicatesetName: "prodcloudrep"
+      PMFortinetInstanceType: "m3.medium"
+      PMVpcCIDR: "10.2.0.0/16"
+      PMPublicSubnet1CIDR: "10.2.1.0/24"
+      PMPublicSubnet2CIDR: "10.2.2.0/24"
+      PMPrivateSubnet1CIDR: "10.2.3.0/24"
+      PMPrivateSubnet2CIDR: "10.2.4.0/24"
+
+  RegionMap:
+    # Default North Virginia
+    us-east-1:
+      # moneylion- mongo3.4-debian-tpl
+      AMI: "ami-e27e6899" # Moneylion
+
+###############################################################################################################
+
+Resources:
+
+  MyIAMRole:
+    Type: "AWS::CloudFormation::Stack"
+    Condition: "UseProdEnv"
+    Properties:
+      TemplateURL: !Sub "${PMTemplateURL}/mongo-iam.yaml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
+
+  MyS3Bucket:
+    Type: "AWS::CloudFormation::Stack"
+    Condition: "UseProdEnv"
+    Properties:
+      TemplateURL: !Sub "${PMTemplateURL}/mongo-s3bucket.yaml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
+
+  MyVPC:
+    Type: "AWS::CloudFormation::Stack"
+    Condition: "UseProdEnv"
+    DependsOn:
+    - "MyS3Bucket"
+    Properties:
+      TemplateURL: !Sub "${PMTemplateURL}/mongo-vpc.yaml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
+        PMVpcCIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMVpcCIDR"]
+        PMPublicSubnet1CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPublicSubnet1CIDR"]
+        PMPublicSubnet2CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPublicSubnet2CIDR"]
+        PMPrivateSubnet1CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPrivateSubnet1CIDR"]
+        PMPrivateSubnet2CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPrivateSubnet2CIDR"]
+        PMFlowLogRole: !GetAtt "MyIAMRole.Outputs.VPCFlowLogRoleArn"
+
+  MySecurityGroup:
+    Type: "AWS::CloudFormation::Stack"
+    Condition: "UseProdEnv"
+    DependsOn:
+    - "MyVPC"
+    Properties:
+      TemplateURL: !Sub "${PMTemplateURL}/mongo-securitygroup.yaml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
+        PMOWNIP: !Ref "PMOWNIP"
+        PMVPC: !GetAtt "MyVPC.Outputs.VPC"
+        PMNACL: !GetAtt "MyVPC.Outputs.MyNetworkACL"
+
+  MyMongoSEC1EC2:
+    Type: "AWS::CloudFormation::Stack"
+    Condition: "UseProdEnv"
+    DependsOn:
+    - "MySecurityGroup"
+    Properties:
+      TemplateURL: !Sub "${PMTemplateURL}/mongo-secondary1-ec2.yaml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
+        PMKeyName: !Ref "PMKeyName"
+        PMMongoSecondary: !Ref "PMMongoSecondary"
+        PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
+        PMMongoReplicatesetName: !FindInMap ["EnvMap", !Ref "AWS::StackName", "MongoReplicatesetName"]
+        PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
+        PMDomainMongoSecondary1: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainMongoSecondary1"]
+        PMHostedZone: !Ref "PMHostedZone"
+
+  MyMongoSEC2EC2:
+    Type: "AWS::CloudFormation::Stack"
+    Condition: "UseProdEnv"
+    DependsOn:
+    - "MySecurityGroup"
+    Properties:
+      TemplateURL: !Sub "${PMTemplateURL}/mongo-secondary2-ec2.yaml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
+        PMKeyName: !Ref "PMKeyName"
+        PMMongoSecondary: !Ref "PMMongoSecondary"
+        PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
+        PMMongoReplicatesetName: !FindInMap ["EnvMap", !Ref "AWS::StackName", "MongoReplicatesetName"]
+        PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
+        PMDomainMongoSecondary2: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainMongoSecondary2"]
+        PMHostedZone: !Ref "PMHostedZone"
+
+  MyMongoMSEC2:
+    Type: "AWS::CloudFormation::Stack"
+    Condition: "UseProdEnv"
+    DependsOn:
+    - "MyMongoSEC1EC2"
+    Properties:
+      TemplateURL: !Sub "${PMTemplateURL}/mongo-master-ec2.yaml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
+        PMKeyName: !Ref "PMKeyName"
+        PMMongoMaster: !Ref "PMMongoMaster"
+        PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
+        PMMongoReplicatesetName: !FindInMap ["EnvMap", !Ref "AWS::StackName", "MongoReplicatesetName"]
+        PMDomainMongoSecondary1: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainMongoSecondary1"]
+        PMDomainMongoSecondary2: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainMongoSecondary2"]
+        PMDomainMongoMaster: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainMongoMaster"]
+        PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
+        PMHostedZone: !Ref "PMHostedZone"
+
+  # MyDNS:
+  #   Type: "AWS::CloudFormation::Stack"
+  #   Condition: "UseProdEnv"
+  #   DependsOn:
+  #   - "MyMongoMSEC2"
+  #   Properties:
+  #     TemplateURL: !Sub "${PMTemplateURL}/mongo-route53.yaml"
+  #     TimeoutInMinutes: '5'
+  #     Parameters:
+  #       PMMongoSEC1EC2IP: !GetAtt "MyMongoSEC1EC2.Outputs.MyMongoSEC1EC2IPAddress"
+  #       PMDomainMongoSecondary1: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainMongoSecondary1"]
+  #       PMMongoMSEC2IP: !GetAtt "MyMongoMSEC2.Outputs.MyMongoMSEC2IPAddress"
+  #       PMDomainMongoMaster: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainMongoMaster"]
+  #       PMHostedZone: !Ref "PMHostedZone"

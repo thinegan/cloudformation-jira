@@ -1,0 +1,64 @@
+# Note, You need at least 1 domain and this is not free tier.
+# Pricing : https://aws.amazon.com/route53/pricing/
+#
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+    This template deploys route53 Setup,
+
+Parameters: 
+
+  PMHostedZone:
+    Description: "A reference to the Hosted Zone"
+    Type: "String"
+
+  PMDomainMongoSecondary1:
+    Description: "A reference to the Mongo Secondary 1 FQDN domain name"
+    Type: "String"
+
+  PMMongoSEC1EC2IP:
+    Description: "A reference to the Mongo Secondary 1 EIP"
+    Type: "String"
+
+  PMDomainMongoMaster:
+    Description: "A reference to the Mongo Master FQDN domain name"
+    Type: "String"
+
+  PMMongoMSEC2IP:
+    Description: "A reference to the Mongo Master EIP"
+    Type: "String"
+
+Resources:
+
+  DNSRecordMongoSEC1EC2:
+    Type: "AWS::Route53::RecordSet"
+    Properties:
+      HostedZoneName: !Sub "${PMHostedZone}."
+      Comment: "DNS name for Mongo Secondary 1."
+      Name: !Sub "${PMDomainMongoSecondary1}."
+      Type: 'A'
+      TTL: '600'
+      ResourceRecords:
+      - !Ref "PMMongoSEC1EC2IP"
+
+  DNSRecordMongoMSEC2:
+    Type: "AWS::Route53::RecordSet"
+    Properties:
+      HostedZoneName: !Sub "${PMHostedZone}."
+      Comment: "DNS name for Mongo Master."
+      Name: !Sub "${PMDomainMongoMaster}."
+      Type: 'A'
+      TTL: '600'
+      ResourceRecords:
+      - !Ref "PMMongoMSEC2IP"
+
+Outputs:
+
+  DNSRecordMongoSEC1EC2:
+    Description: "A reference to the Route53"
+    Value: !Ref "DNSRecordMongoSEC1EC2"
+
+  DNSRecordMongoMSEC2:
+    Description: "A reference to the Route53"
+    Value: !Ref "DNSRecordMongoMSEC2"
+
