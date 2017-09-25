@@ -85,7 +85,6 @@ Parameters:
 Conditions: 
   UseProdEnv: !Equals [ !Ref "PMServerEnv", "prod" ]
 
-
 Resources:
 
   Database:
@@ -127,9 +126,6 @@ Resources:
         collation_connection: "utf8_bin"
         collation_server: "utf8_bin"
         max_allowed_packet : "16777216"
-#      Tags:
-#        - CloudformationTag 
-#Value of property Tags must be a list of objects
 
 Outputs:
 
