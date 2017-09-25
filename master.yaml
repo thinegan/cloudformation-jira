@@ -93,6 +93,9 @@ Mappings:
     us-east-1:
       # Amazon Linux AMI 2017.03.1 (HVM), SSD Volume Type
       AMI: "ami-4fffc834"
+      # Update with your own cert ARN HERE!
+      # Assuming you have already upload to AWS Certificate Manager
+      CertARN: "arn:aws:acm:us-east-1:210406761874:certificate/6e8e02b1-bce8-43f3-9e00-23050cd6f1ff"
 
 ###############################################################################################################
 
@@ -165,6 +168,20 @@ Resources:
         DatabaseInstanceClass: "db.t2.micro"
         PMRDSSG: !GetAtt "MySecurityGroup.Outputs.MyRDSSG"
         PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
+
+  MyJiraELB:
+    Type: "AWS::CloudFormation::Stack"
+    DependsOn:
+    - "MyRDS"
+    Properties:
+      TemplateURL: !Sub "${PMTemplateURL}/atlassian-elb.yaml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
+        PMDomain1CertARN: !FindInMap ["RegionMap", !Ref "AWS::Region", "CertARN"]
+        PMJiraELBSG: !GetAtt "MySecurityGroup.Outputs.JiraELBSG"
+        PMS3Logging: !GetAtt "MyS3Bucket.Outputs.S3Logging"
+        PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
 
   # MyJiraInstance:
   #   Type: "AWS::CloudFormation::Stack"

@@ -54,7 +54,7 @@ Resources:
         - Key: "Name"
           Value: !Sub "${PMServerEnv}-MyJiraSG"
 
-  # Allow RDS connection from ECS Cluster only.
+  # Allow RDS connection.
   MyRDSSG:
     Type: "AWS::EC2::SecurityGroup"
     Properties:
@@ -72,6 +72,32 @@ Resources:
       Tags:
         - Key: "Name"
           Value: !Sub "${PMServerEnv}-MyRDSSG"
+
+  # Jira Web Proxy Elastic Load Balancer
+  JiraELBSG:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "ELB-JiraELBSG"
+      SecurityGroupEgress:
+      - IpProtocol: "-1"
+        CidrIp: "0.0.0.0/0"
+      SecurityGroupIngress:
+      - IpProtocol: 'icmp'
+        FromPort: '-1'
+        ToPort: '-1'
+        CidrIp: '0.0.0.0/0'
+      - CidrIp: "0.0.0.0/0"
+        FromPort: "80"
+        IpProtocol: "tcp"
+        ToPort: "80"
+      - CidrIp: "0.0.0.0/0"
+        FromPort: "443"
+        IpProtocol: "tcp"
+        ToPort: "443"
+      VpcId: !Ref "PMVPC"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${PMServerEnv}-JiraELBSG"
   #####################################################################################
   # Additional Firewall Protection (inbound and outbound traffic at the subnet level)
   ####### INBOUND HTTP Network ACL RULES ##############################################
@@ -256,3 +282,9 @@ Outputs:
     Value: !Ref "MyRDSSG"
     Export:
       Name: !Sub "${PMServerEnv}-MyRDSSG"
+
+  JiraELBSG: 
+    Description: "A reference to the security group for Jira Elb proxy"
+    Value: !Ref "JiraELBSG"
+    Export:
+      Name: !Sub "${PMServerEnv}-JiraELBSG"
