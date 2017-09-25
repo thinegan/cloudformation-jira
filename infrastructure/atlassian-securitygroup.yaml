@@ -109,7 +109,7 @@ Resources:
       Egress: "false"
       CidrBlock: "0.0.0.0/0"
       PortRange:
-        From: '0'
+        From: '1024'
         To: '65535'
 
   ####### INBOUND ICMP Network ACL RULES #######
@@ -179,7 +179,7 @@ Resources:
       Egress: "true"
       CidrBlock: "0.0.0.0/0"
       PortRange:
-        From: '0'
+        From: '1024'
         To: '65535'
 
   ####### OUTBOUND ICMP Network ACL RULES #######
