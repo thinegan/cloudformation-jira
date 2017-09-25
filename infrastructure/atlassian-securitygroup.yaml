@@ -117,7 +117,7 @@ Resources:
         To: '22'
 
   ####### INBOUND MYSQL Network ACL RULES #######
-  InboundSSHNACL:
+  InboundMYSQLNACL:
     Type: "AWS::EC2::NetworkAclEntry"
     Properties:
       NetworkAclId: !Ref "PMNACL"
@@ -201,7 +201,7 @@ Resources:
         To: '22'
 
   ####### OUTBOUND MYSQL Network ACL RULES #######
-  OutboundSSHNACL:
+  OutboundMYSQLNACL:
     Type: "AWS::EC2::NetworkAclEntry"
     Properties:
       NetworkAclId: !Ref "PMNACL"
