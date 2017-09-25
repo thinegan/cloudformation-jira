@@ -51,7 +51,7 @@ Parameters:
 
 ####### Condition Setup #######
 Conditions:
-  UseProdEnv: !Equals [ !Ref "PMServerEnv", "prod" ]
+  UseProdEnv: !Equals [ !Ref "PMInstanceType", "prod" ]
 
 ###############################################################################################################
 #
