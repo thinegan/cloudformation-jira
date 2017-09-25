@@ -128,19 +128,19 @@ Resources:
         PMPrivateSubnet2CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPrivateSubnet2CIDR"]
         PMFlowLogRole: !GetAtt "MyIAMRole.Outputs.VPCFlowLogRoleArn"
 
-  # MySecurityGroup:
-  #   Type: "AWS::CloudFormation::Stack"
-  #   Condition: "UseProdEnv"
-  #   DependsOn:
-  #   - "MyVPC"
-  #   Properties:
-  #     TemplateURL: !Sub "${PMTemplateURL}/atlassian-securitygroup.yaml"
-  #     TimeoutInMinutes: '5'
-  #     Parameters:
-  #       PMServerEnv: !Ref "AWS::StackName"
-  #       PMOWNIP: !Ref "PMOWNIP"
-  #       PMVPC: !GetAtt "MyVPC.Outputs.VPC"
-  #       PMNACL: !GetAtt "MyVPC.Outputs.MyNetworkACL"
+  MySecurityGroup:
+    Type: "AWS::CloudFormation::Stack"
+    #Condition: "UseProdEnv"
+    DependsOn:
+    - "MyVPC"
+    Properties:
+      TemplateURL: !Sub "${PMTemplateURL}/atlassian-securitygroup.yaml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
+        PMOWNIP: !Ref "PMOWNIP"
+        PMVPC: !GetAtt "MyVPC.Outputs.VPC"
+        PMNACL: !GetAtt "MyVPC.Outputs.MyNetworkACL"
 
   # MyMongoSEC1EC2:
   #   Type: "AWS::CloudFormation::Stack"
