@@ -116,7 +116,7 @@ Resources:
 Outputs:
   JiraLoadBalancer:
     Description: "A reference to the Jira Load Balancer"
-    Value: !Ref "WEBLoadBalancer"
+    Value: !Ref "MyLoadBalancer"
 
   JiraLBDNSName:
     Description: "The URL of the Jira Load Balancer"
