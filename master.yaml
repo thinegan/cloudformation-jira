@@ -39,6 +39,12 @@ Parameters:
     Description: "Enter an existing Hosted Zone."
     Type: "String"
 
+  PMDatabasePassword:
+    #Sample password do not use. Make new pass from parameter.
+    Default: "0bee082a464"
+    Description: "Enter a password."
+    Type: "String"
+
   PMJiraInstanceType: 
     Description: "Enter an instance type. Default is t2.micro."
     Type: "String"
@@ -153,7 +159,7 @@ Resources:
       Parameters:
         PMServerEnv: !Ref "AWS::StackName"
         DatabaseUser: "startupadmin"
-        DatabasePassword: "0bee082a464" #Sample password do not use. Make new pass from parameter.
+        DatabasePassword: !Ref "PMDatabasePassword"
         DatabaseName: !Sub "${AWS::StackName}jiradb"
         DatabaseSize: '5'
         DatabaseEngine: "mysql"
