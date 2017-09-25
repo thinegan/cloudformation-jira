@@ -120,11 +120,11 @@ Outputs:
 
   JiraLBDNSName:
     Description: "The URL of the Jira Load Balancer"
-    Value: !GetAtt "JiraLoadBalancer.DNSName"
+    Value: !GetAtt "MyLoadBalancer.DNSName"
 
   JiraLBHostedZoneId:
     Description: "The CanonicalHostedZoneNameID of the Jira Load Balancer"
-    Value: !GetAtt "JiraLoadBalancer.CanonicalHostedZoneNameID"
+    Value: !GetAtt "MyLoadBalancer.CanonicalHostedZoneNameID"
 
 
 
