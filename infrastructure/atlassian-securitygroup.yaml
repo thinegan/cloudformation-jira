@@ -250,3 +250,9 @@ Outputs:
     Value: !Ref "MyJiraSG"
     Export:
       Name: !Sub "${PMServerEnv}-MyJiraSG"
+
+  MyRDSSG: 
+    Description: "A reference to the security group for Mysql RDS"
+    Value: !Ref "MyRDSSG"
+    Export:
+      Name: !Sub "${PMServerEnv}-MyRDSSG"

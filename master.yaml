@@ -142,24 +142,24 @@ Resources:
         PMVPC: !GetAtt "MyVPC.Outputs.VPC"
         PMNACL: !GetAtt "MyVPC.Outputs.MyNetworkACL"
 
-  # MyRDS:
-  #   Type: "AWS::CloudFormation::Stack"
-  #   Condition: "UseProdEnv"
-  #   DependsOn:
-  #   - "MySecurityGroup"
-  #   Properties:
-  #     TemplateURL: !Sub "${PMTemplateURL}/atlassian-rds.yaml"
-  #     TimeoutInMinutes: '5'
-  #     Parameters:
-  #       PMServerEnv: !Ref "AWS::StackName"
-  #       DatabaseUser: "startupadmin"
-  #       DatabasePassword: "0bee082a464"
-  #       DatabaseName: !Sub "${AWS::StackName}db"
-  #       DatabaseSize: '5'
-  #       DatabaseEngine: "mysql"
-  #       DatabaseInstanceClass: "db.t2.micro"
-  #       PMRDSSG: !GetAtt "MySecurityGroup.Outputs.RDSSG"
-  #       PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
+  MyRDS:
+    Type: "AWS::CloudFormation::Stack"
+    Condition: "UseProdEnv"
+    DependsOn:
+    - "MySecurityGroup"
+    Properties:
+      TemplateURL: !Sub "${PMTemplateURL}/atlassian-rds.yaml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
+        DatabaseUser: "startupadmin"
+        DatabasePassword: "0bee082a464" #Sample password do not use. Make new pass from parameter.
+        DatabaseName: !Sub "${AWS::StackName}jiradb"
+        DatabaseSize: '5'
+        DatabaseEngine: "mysql"
+        DatabaseInstanceClass: "db.t2.micro"
+        PMRDSSG: !GetAtt "MySecurityGroup.Outputs.MyRDSSG"
+        PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
 
   # MyJiraInstance:
   #   Type: "AWS::CloudFormation::Stack"
