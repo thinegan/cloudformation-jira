@@ -135,7 +135,7 @@ Resources:
 
   MySecurityGroup:
     Type: "AWS::CloudFormation::Stack"
-    #Condition: "UseProdEnv"
+    Condition: "UseProdEnv"
     DependsOn:
     - "MyVPC"
     Properties:
@@ -149,7 +149,7 @@ Resources:
 
   MyRDS:
     Type: "AWS::CloudFormation::Stack"
-    #Condition: "UseProdEnv"
+    Condition: "UseProdEnv"
     DependsOn:
     - "MySecurityGroup"
     Properties:
