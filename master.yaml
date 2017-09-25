@@ -51,7 +51,7 @@ Parameters:
 
 ####### Condition Setup #######
 Conditions:
-  UseProdEnv: !Equals [ !Ref "PMJiraInstanceType", "prod" ]
+  UseProdEnv: !Equals [ !Ref "UseProdEnv", "prod" ]
 
 ###############################################################################################################
 #
@@ -142,13 +142,32 @@ Resources:
         PMVPC: !GetAtt "MyVPC.Outputs.VPC"
         PMNACL: !GetAtt "MyVPC.Outputs.MyNetworkACL"
 
-  # MyMongoSEC1EC2:
+  # MyRDS:
   #   Type: "AWS::CloudFormation::Stack"
   #   Condition: "UseProdEnv"
   #   DependsOn:
   #   - "MySecurityGroup"
   #   Properties:
-  #     TemplateURL: !Sub "${PMTemplateURL}/mongo-secondary1-ec2.yaml"
+  #     TemplateURL: !Sub "${PMTemplateURL}/atlassian-rds.yaml"
+  #     TimeoutInMinutes: '5'
+  #     Parameters:
+  #       PMServerEnv: !Ref "AWS::StackName"
+  #       DatabaseUser: "startupadmin"
+  #       DatabasePassword: "0bee082a464"
+  #       DatabaseName: !Sub "${AWS::StackName}db"
+  #       DatabaseSize: '5'
+  #       DatabaseEngine: "mysql"
+  #       DatabaseInstanceClass: "db.t2.micro"
+  #       PMRDSSG: !GetAtt "MySecurityGroup.Outputs.RDSSG"
+  #       PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
+
+  # MyJiraInstance:
+  #   Type: "AWS::CloudFormation::Stack"
+  #   Condition: "UseProdEnv"
+  #   DependsOn:
+  #   - "MySecurityGroup"
+  #   Properties:
+  #     TemplateURL: !Sub "${PMTemplateURL}/atlassian-jira-auto-config.yaml"
   #     TimeoutInMinutes: '5'
   #     Parameters:
   #       PMServerEnv: !Ref "AWS::StackName"

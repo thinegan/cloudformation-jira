@@ -54,6 +54,24 @@ Resources:
         - Key: "Name"
           Value: !Sub "${PMServerEnv}-MyJiraSG"
 
+  # Allow RDS connection from ECS Cluster only.
+  MyRDSSG:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      VpcId: !Ref "PMVPC"
+      GroupDescription: "Security group for RDS DB Instance."
+      SecurityGroupEgress:
+      - IpProtocol: "-1"
+        CidrIp: "0.0.0.0/0"
+      SecurityGroupIngress:
+      - FromPort: "3306"
+        IpProtocol: "tcp"
+        SourceSecurityGroupId:
+          Ref: "MyJiraSG"
+        ToPort: "3306"
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${PMServerEnv}-MyRDSSG"
   #####################################################################################
   # Additional Firewall Protection (inbound and outbound traffic at the subnet level)
   ####### INBOUND HTTP Network ACL RULES ##############################################
@@ -97,6 +115,20 @@ Resources:
       PortRange:
         From: '22'
         To: '22'
+
+  ####### INBOUND MYSQL Network ACL RULES #######
+  InboundSSHNACL:
+    Type: "AWS::EC2::NetworkAclEntry"
+    Properties:
+      NetworkAclId: !Ref "PMNACL"
+      RuleNumber: '310'
+      Protocol: "6"
+      RuleAction: "allow"
+      Egress: "false"
+      CidrBlock: !Ref "PMOWNIP"
+      PortRange:
+        From: '3306'
+        To: '3306'
 
   ####### INBOUND Ephemeral Ports Network ACL RULES #######
   InboundEPHNACL:
@@ -167,6 +199,20 @@ Resources:
       PortRange:
         From: '22'
         To: '22'
+
+  ####### OUTBOUND MYSQL Network ACL RULES #######
+  OutboundSSHNACL:
+    Type: "AWS::EC2::NetworkAclEntry"
+    Properties:
+      NetworkAclId: !Ref "PMNACL"
+      RuleNumber: '310'
+      Protocol: "6"
+      RuleAction: "allow"
+      Egress: "true"
+      CidrBlock: !Ref "PMOWNIP"
+      PortRange:
+        From: '3306'
+        To: '3306'
 
   ####### OUTBOUND Ephemeral Ports Network ACL RULES #######
   OutboundEPHNACL:
