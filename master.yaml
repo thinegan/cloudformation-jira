@@ -40,8 +40,7 @@ Parameters:
     Type: "String"
 
   PMDatabasePassword:
-    #Sample password do not use. Make new pass from parameter.
-    Default: "0bee082a464"
+    Default: "0bee082a464" #Sample password do not use. Make new pass from parameter.
     Description: "Enter a password."
     Type: "String"
 
