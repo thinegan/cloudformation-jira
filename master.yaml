@@ -51,7 +51,7 @@ Parameters:
 
 ####### Condition Setup #######
 Conditions:
-  UseProdEnv: !Equals [ !Ref "PMInstanceType", "prod" ]
+  UseProdEnv: !Equals [ !Ref "PMJiraInstanceType", "prod" ]
 
 ###############################################################################################################
 #
