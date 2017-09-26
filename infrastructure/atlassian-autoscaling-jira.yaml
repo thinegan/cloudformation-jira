@@ -111,7 +111,7 @@ Resources:
           service docker start
           docker run -d -p 8000:8080 \
           -v /home/jira/jira-data:/home/www/public_html/jira-data.server.com \
-          --name jira thinegan/debian-jira:v7.4.2
+          --name jira thinegan/debian-jira:v7.5.0
 
           /opt/aws/bin/cfn-signal -e 0 -r 'server setup complete' "${WaitHandleWEB}"  > /tmp/userdata.log
 
