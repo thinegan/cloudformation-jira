@@ -121,25 +121,25 @@ Resources:
         Value: !Sub "${PMServerEnv}-Jiraserver"
         PropagateAtLaunch: 'true'
 
-  # Auto ScalingUp Policy - Basic Setup
-  JiraServerScaleUpPolicy:
-    Type: "AWS::AutoScaling::ScalingPolicy"
-    Properties:
-      AdjustmentType: "ChangeInCapacity"
-      AutoScalingGroupName:
-        Ref: "JiraScalingGroup"
-      Cooldown: '300'
-      ScalingAdjustment: '1'
+  # # Auto ScalingUp Policy - Basic Setup
+  # JiraServerScaleUpPolicy:
+  #   Type: "AWS::AutoScaling::ScalingPolicy"
+  #   Properties:
+  #     AdjustmentType: "ChangeInCapacity"
+  #     AutoScalingGroupName:
+  #       Ref: "JiraScalingGroup"
+  #     Cooldown: '300'
+  #     ScalingAdjustment: '1'
 
-  # Auto ScalingDown Policy - Basic Setup
-  JiraServerScaleDownPolicy:
-    Type: "AWS::AutoScaling::ScalingPolicy"
-    Properties:
-      AdjustmentType: "ChangeInCapacity"
-      AutoScalingGroupName:
-        Ref: "JiraScalingGroup"
-      Cooldown: '300'
-      ScalingAdjustment: '-1'
+  # # Auto ScalingDown Policy - Basic Setup
+  # JiraServerScaleDownPolicy:
+  #   Type: "AWS::AutoScaling::ScalingPolicy"
+  #   Properties:
+  #     AdjustmentType: "ChangeInCapacity"
+  #     AutoScalingGroupName:
+  #       Ref: "JiraScalingGroup"
+  #     Cooldown: '300'
+  #     ScalingAdjustment: '-1'
 
 
 Outputs:
@@ -148,10 +148,10 @@ Outputs:
     Description: "Auto Scaling Group Reference ID"
     Value: !Ref "JiraScalingGroup"
 
-  JiraServerScaleUpPolicy: 
-    Description: "Auto Scaling Up Policy Reference ID"
-    Value: !Ref "JiraServerScaleUpPolicy"
+  # JiraServerScaleUpPolicy: 
+  #   Description: "Auto Scaling Up Policy Reference ID"
+  #   Value: !Ref "JiraServerScaleUpPolicy"
 
-  JiraServerScaleDownPolicy: 
-    Description: "Auto Scaling Down Policy Reference ID"
-    Value: !Ref "JiraServerScaleDownPolicy"
+  # JiraServerScaleDownPolicy: 
+  #   Description: "Auto Scaling Down Policy Reference ID"
+  #   Value: !Ref "JiraServerScaleDownPolicy"

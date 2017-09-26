@@ -215,22 +215,7 @@ Resources:
         PMAutoscaleMax: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMax"]
         PMAutoscaleDes: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleDes"]
 
-  # MyJiraInstance:
-  #   Type: "AWS::CloudFormation::Stack"
-  #   Condition: "UseProdEnv"
-  #   DependsOn:
-  #   - "MySecurityGroup"
-  #   Properties:
-  #     TemplateURL: !Sub "${PMTemplateURL}/atlassian-jira-auto-config.yaml"
-  #     TimeoutInMinutes: '5'
-  #     Parameters:
-  #       PMServerEnv: !Ref "AWS::StackName"
-  #       PMKeyName: !Ref "PMKeyName"
-  #       PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
-  #       PMMongoReplicatesetName: !FindInMap ["EnvMap", !Ref "AWS::StackName", "MongoReplicatesetName"]
-  #       PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
-  #       PMDomainMongoSecondary1: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainMongoSecondary1"]
-  #       PMHostedZone: !Ref "PMHostedZone"
+
 
   # MyMongoSEC2EC2:
   #   Type: "AWS::CloudFormation::Stack"
