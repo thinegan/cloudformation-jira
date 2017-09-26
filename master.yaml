@@ -65,6 +65,9 @@ Mappings:
   EnvMap:
 
     dev:
+      AutoscaleMin: '1'
+      AutoscaleMax: '1'
+      AutoscaleDes: '1'
       DomainJira: "dev-jira.crytera.com"
       PMVpcCIDR: "10.0.0.0/16"
       PMPublicSubnet1CIDR: "10.0.1.0/24"
@@ -73,6 +76,9 @@ Mappings:
       PMPrivateSubnet2CIDR: "10.0.4.0/24"
 
     staging:
+      AutoscaleMin: '1'
+      AutoscaleMax: '1'
+      AutoscaleDes: '1'
       DomainJira: "staging-jira.crytera.com"
       PMVpcCIDR: "10.1.0.0/16"
       PMPublicSubnet1CIDR: "10.1.1.0/24"
@@ -81,6 +87,9 @@ Mappings:
       PMPrivateSubnet2CIDR: "10.1.4.0/24"
 
     prod:
+      AutoscaleMin: '1'
+      AutoscaleMax: '1'
+      AutoscaleDes: '1'
       DomainJira: "prod-jira.crytera.com"
       PMVpcCIDR: "10.2.0.0/16"
       PMPublicSubnet1CIDR: "10.2.1.0/24"
@@ -183,6 +192,30 @@ Resources:
         PMJiraELBSG: !GetAtt "MySecurityGroup.Outputs.JiraELBSG"
         PMS3Logging: !GetAtt "MyS3Bucket.Outputs.S3Logging"
         PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
+
+
+  MyJiraAutoScaling:
+    Type: "AWS::CloudFormation::Stack"
+    Condition: "UseProdEnv"
+    DependsOn:
+    - "MyWEBELB"
+    Properties:
+      TemplateURL: !Sub "${PMTemplateURL}/atlassian-autoscaling-jira.yaml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMServerEnv: !Ref "AWS::StackName"
+        PMKeyName: !Ref "PMKeyName"
+        PMJiraInstanceType: !Ref "PMJiraInstanceType"
+        PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
+        PMMyJiraSG: !GetAtt "MySecurityGroup.Outputs.MyJiraSG"
+        PMJiraLoadBalancer: !GetAtt "MyLoadBalancer.Outputs.JiraLoadBalancer"
+        PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
+        PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
+        #PMAPPLoadBalancerUrl: !GetAtt "MyAPPELB.Outputs.APPLoadBalancerUrl"
+        PMAutoscaleMin: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMin"]
+        PMAutoscaleMax: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMax"]
+        PMAutoscaleDes: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleDes"]
+        #PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "AWS::StackName", "WEBDOMAIN"]
 
   # MyJiraInstance:
   #   Type: "AWS::CloudFormation::Stack"
