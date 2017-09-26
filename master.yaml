@@ -47,7 +47,7 @@ Parameters:
   PMJiraInstanceType: 
     Description: "Enter an instance type. Default is t2.micro."
     Type: "String"
-    Default: "t2.micro"
+    Default: "t2.micro" # minimum requirement for Jira is t2.medium.
     AllowedValues: 
       - "t2.micro"
       - "t2.medium"

@@ -93,11 +93,25 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash -xe
-          yum install httpd -y
+          yum install docker htop telnet git awslogs python-pip aws-cfn-bootstrap -y
           yum update -y
-          service httpd start
-          chkconfig httpd on
-          echo "<html><h1>Hello Cloud Gurus!</h1></html>" > /var/www/html/index.html
+
+          echo "[plugins]
+          cwlogs = cwlogs
+          [default]
+          region = ${AWS::Region}" > /etc/awslogs/awscli.conf
+          service awslogs start
+          chkconfig awslogs on
+
+          useradd -u 1000 jira
+          mkdir -p /home/jira/jira-data
+          chown -R jira:jira /home/jira/jira-data
+          chmod -R +x /home/jira/jira-data
+
+          service docker start
+          docker run -d -p 8000:8080 \
+          -v /home/jira/jira-data:/home/www/public_html/jira-data.server.com \
+          --name jira thinegan/debian-jira:v7.4.2
 
           /opt/aws/bin/cfn-signal -e 0 -r 'server setup complete' "${WaitHandleWEB}"  > /tmp/userdata.log
 
