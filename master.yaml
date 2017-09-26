@@ -196,7 +196,7 @@ Resources:
 
   MyJiraAutoScaling:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    #Condition: "UseProdEnv"
     DependsOn:
     - "MyJiraELB"
     Properties:
@@ -211,11 +211,9 @@ Resources:
         PMJiraLoadBalancer: !GetAtt "MyJiraELB.Outputs.JiraLoadBalancer"
         PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
         PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
-        #PMAPPLoadBalancerUrl: !GetAtt "MyAPPELB.Outputs.APPLoadBalancerUrl"
         PMAutoscaleMin: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMin"]
         PMAutoscaleMax: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMax"]
         PMAutoscaleDes: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleDes"]
-        #PMWEBDOMAIN: !FindInMap ["EnvMap", !Ref "AWS::StackName", "WEBDOMAIN"]
 
   # MyJiraInstance:
   #   Type: "AWS::CloudFormation::Stack"
