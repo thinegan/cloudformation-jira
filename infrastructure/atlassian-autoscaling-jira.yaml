@@ -1,0 +1,157 @@
+# Note, the development environment will only spin a min of 2 instance (HA Support)
+# The production environment will spin a min of 2 instance (HA support)
+# You can adjust the ASMIN, ASMAX, ASDES at the master.yaml file
+# to meet your instances spin numbers.
+#
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+    This template deploys an AutoScaling Launch Config and Group for Jira
+Parameters: 
+
+  PMServerEnv:
+    Description: "Server Environment name."
+    ConstraintDescription: "Choose an Environment from the drop down"
+    Type: "String"
+    AllowedValues: 
+      - "dev"
+      - "staging"
+      - "prod"
+
+  PMKeyName:
+    Description: "Enter an existing EC2 KeyPair. Default is MyEC2Key"
+    Type: "String"
+
+  PMJiraInstanceType: 
+    Description: "Enter t2.micro or m1.small. Default is t2.micro."
+    Type: "String"
+    AllowedValues: 
+      - "t2.micro"
+      - "t2.medium"
+      - "m4.large"
+      - "m4.xlarge"
+
+  PMPublicSubnets:
+    Description: "Subnets to launch instances into"
+    Type: "List<AWS::EC2::Subnet::Id>"
+
+  PMMyJiraSG:
+    Description: "Select the Security Group to use for the EC2 hosts"
+    Type: "AWS::EC2::SecurityGroup::Id"
+
+  PMJiraLoadBalancer:
+    Description: "A reference to the Jira Load Balancer"
+    Type: "String"
+
+  PMIAMS3CWInstanceProfile:
+    Description: "A reference to the IamInstanceProfile"
+    Type: "String"
+
+  PMRegionAMI:
+    Description: "A reference to the Region AMI"
+    Type: "String"
+
+  PMAutoscaleMin:
+    Description: "A reference to the MinSize"
+    Type: "String"
+
+  PMAutoscaleMax:
+    Description: "A reference to the MaxSize"
+    Type: "String"
+
+  PMAutoscaleDes:
+    Description: "A reference to the DesiredCapacity"
+    Type: "String"
+
+
+Resources:
+
+  # Auto Scaling Launch Configuration
+  JiraLaunchConfiguration:
+    Type: "AWS::AutoScaling::LaunchConfiguration"
+    Properties:
+      AssociatePublicIpAddress: "true"
+      KeyName:
+        Ref: "PMKeyName"
+      ImageId:
+        Ref: "PMRegionAMI"
+      InstanceType:
+        Ref: "PMJiraInstanceType"
+      IamInstanceProfile:
+        Ref: "PMIAMS3CWInstanceProfile"
+      SecurityGroups:
+      - Ref: "PMMyJiraSG"
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          yum install httpd -y
+          yum update -y
+          service httpd start
+          chkconfig httpd on
+          echo "<html><h1>Hello Cloud Gurus!</h1></html>" > /var/www/html/index.html
+
+          /opt/aws/bin/cfn-signal -e 0 -r 'server setup complete' "${WaitHandleWEB}"  > /tmp/userdata.log
+
+  WaitHandleWEB:
+    Type: "AWS::CloudFormation::WaitConditionHandle"
+
+  WaitCondition:
+    Type: "AWS::CloudFormation::WaitCondition"
+    Properties:
+      Handle: !Ref "WaitHandleWEB"
+      Timeout: '600'
+
+  # Auto Scaling Group Basic Setup
+  JiraScalingGroup: 
+    Type: "AWS::AutoScaling::AutoScalingGroup"
+    Properties:
+      MinSize: !Ref "PMAutoscaleMin"
+      MaxSize: !Ref "PMAutoscaleMax"
+      DesiredCapacity: !Ref "PMAutoscaleDes"
+      LaunchConfigurationName:
+        Ref: "JiraLaunchConfiguration"
+      VPCZoneIdentifier:
+        Ref: "PMPublicSubnets"
+      LoadBalancerNames:
+      - Ref: "PMJiraLoadBalancer"
+      HealthCheckGracePeriod: "300"
+      HealthCheckType: "ELB"
+      Tags:
+      - Key: "Name"
+        Value: !Sub "${PMServerEnv}-Jiraserver"
+        PropagateAtLaunch: 'true'
+
+  # Auto ScalingUp Policy - Basic Setup
+  JiraServerScaleUpPolicy:
+    Type: "AWS::AutoScaling::ScalingPolicy"
+    Properties:
+      AdjustmentType: "ChangeInCapacity"
+      AutoScalingGroupName:
+        Ref: "JiraScalingGroup"
+      Cooldown: '300'
+      ScalingAdjustment: '1'
+
+  # Auto ScalingDown Policy - Basic Setup
+  JiraServerScaleDownPolicy:
+    Type: "AWS::AutoScaling::ScalingPolicy"
+    Properties:
+      AdjustmentType: "ChangeInCapacity"
+      AutoScalingGroupName:
+        Ref: "JiraScalingGroup"
+      Cooldown: '300'
+      ScalingAdjustment: '-1'
+
+
+Outputs:
+
+  JiraScalingGroup: 
+    Description: "Auto Scaling Group Reference ID"
+    Value: !Ref "JiraScalingGroup"
+
+  JiraServerScaleUpPolicy: 
+    Description: "Auto Scaling Up Policy Reference ID"
+    Value: !Ref "JiraServerScaleUpPolicy"
+
+  JiraServerScaleDownPolicy: 
+    Description: "Auto Scaling Down Policy Reference ID"
+    Value: !Ref "JiraServerScaleDownPolicy"
