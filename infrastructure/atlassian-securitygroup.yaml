@@ -47,6 +47,11 @@ Resources:
           FromPort: "22"
           IpProtocol: "tcp"
           ToPort: "22"
+        - FromPort: "8000"
+          IpProtocol: "tcp"
+          SourceSecurityGroupId:
+            Ref: "JiraELBSG"
+          ToPort: "8000"
         - FromPort: "443"
           IpProtocol: "tcp"
           SourceSecurityGroupId:
