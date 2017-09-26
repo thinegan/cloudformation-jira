@@ -196,7 +196,7 @@ Resources:
 
   MyJiraAutoScaling:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    #Condition: "UseProdEnv"
     DependsOn:
     - "MyJiraELB"
     Properties:
@@ -215,17 +215,38 @@ Resources:
         PMAutoscaleMax: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMax"]
         PMAutoscaleDes: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleDes"]
 
-  # MyDNS:
-  #   Type: "AWS::CloudFormation::Stack"
-  #   Condition: "UseProdEnv"
-  #   DependsOn:
-  #   - "MyMongoMSEC2"
-  #   Properties:
-  #     TemplateURL: !Sub "${PMTemplateURL}/mongo-route53.yaml"
-  #     TimeoutInMinutes: '5'
-  #     Parameters:
-  #       PMMongoSEC1EC2IP: !GetAtt "MyMongoSEC1EC2.Outputs.MyMongoSEC1EC2IPAddress"
-  #       PMDomainMongoSecondary1: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainMongoSecondary1"]
-  #       PMMongoMSEC2IP: !GetAtt "MyMongoMSEC2.Outputs.MyMongoMSEC2IPAddress"
-  #       PMDomainMongoMaster: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainMongoMaster"]
-  #       PMHostedZone: !Ref "PMHostedZone"
+  MyDNS:
+    Type: "AWS::CloudFormation::Stack"
+    Condition: "UseProdEnv"
+    DependsOn:
+    - "MyJiraAutoScaling"
+    Properties:
+      TemplateURL: !Sub "${PMTemplateURL}/atlassian-route53.yaml"
+      TimeoutInMinutes: '5'
+      Parameters:
+        PMJiraLBDNSName: !GetAtt "MyJiraELB.Outputs.JiraLBDNSName"
+        PMJiraLBHostedZoneId: !GetAtt "MyJiraELB.Outputs.JiraLBHostedZoneId"
+        PMDomainJira: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainJira"]
+        PMHostedZone: !Ref "PMHostedZone"
+
+Outputs:
+
+  Jiraserver:
+    Description: "Jira Server Site"
+    Value:
+      Fn::Join:
+        - ''
+        - - "http://"
+          - !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainJira"]
+          - "/"
+
+  # Own Certs
+  # https://cloudonaut.io/pitfall-acm-certificate-cloudfront-cloudformation/
+  # Error : The specified SSL certificate doesn't exist, isn't valid, or doesn't include a valid certificate chain.
+  # But the ACM certificate needs to be created in us-east-1 when used together with CloudFront. 
+  # So one possible solution was to create the CloudFormation stack in us-east-1. Lesson learned! :)
+  PMDomain1CertARN:
+    Description: "A reference to SSL Certificate ARN of the region"
+    Value: !FindInMap ["RegionMap", "us-east-1", "CertARN"]
+    Export:
+      Name: !Sub "${AWS::StackName}CDN-PMDomain1CertARN"
