@@ -81,6 +81,15 @@ Resources:
         Ref: "PMIAMS3CWInstanceProfile"
       SecurityGroups:
       - Ref: "PMMyJiraSG"
+      BlockDeviceMappings:
+        # Root Mount Device
+        - DeviceName: "/dev/xvda"
+          Ebs:
+            # Increasing the volume size will actually cause to spin another
+            # ec2 instance and shut down the existing old volume
+            VolumeSize: "50" # Default: 8GB
+            VolumeType: "gp2"
+            #DeleteOnTermination: "false"
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash -xe
@@ -121,37 +130,8 @@ Resources:
         Value: !Sub "${PMServerEnv}-Jiraserver"
         PropagateAtLaunch: 'true'
 
-  # # Auto ScalingUp Policy - Basic Setup
-  # JiraServerScaleUpPolicy:
-  #   Type: "AWS::AutoScaling::ScalingPolicy"
-  #   Properties:
-  #     AdjustmentType: "ChangeInCapacity"
-  #     AutoScalingGroupName:
-  #       Ref: "JiraScalingGroup"
-  #     Cooldown: '300'
-  #     ScalingAdjustment: '1'
-
-  # # Auto ScalingDown Policy - Basic Setup
-  # JiraServerScaleDownPolicy:
-  #   Type: "AWS::AutoScaling::ScalingPolicy"
-  #   Properties:
-  #     AdjustmentType: "ChangeInCapacity"
-  #     AutoScalingGroupName:
-  #       Ref: "JiraScalingGroup"
-  #     Cooldown: '300'
-  #     ScalingAdjustment: '-1'
-
-
 Outputs:
 
   JiraScalingGroup: 
     Description: "Auto Scaling Group Reference ID"
     Value: !Ref "JiraScalingGroup"
-
-  # JiraServerScaleUpPolicy: 
-  #   Description: "Auto Scaling Up Policy Reference ID"
-  #   Value: !Ref "JiraServerScaleUpPolicy"
-
-  # JiraServerScaleDownPolicy: 
-  #   Description: "Auto Scaling Down Policy Reference ID"
-  #   Value: !Ref "JiraServerScaleDownPolicy"
