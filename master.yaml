@@ -208,7 +208,7 @@ Resources:
         PMJiraInstanceType: !Ref "PMJiraInstanceType"
         PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
         PMMyJiraSG: !GetAtt "MySecurityGroup.Outputs.MyJiraSG"
-        PMJiraLoadBalancer: !GetAtt "MyLoadBalancer.Outputs.JiraLoadBalancer"
+        PMJiraLoadBalancer: !GetAtt "MyJiraELB.Outputs.JiraLoadBalancer"
         PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
         PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
         #PMAPPLoadBalancerUrl: !GetAtt "MyAPPELB.Outputs.APPLoadBalancerUrl"
