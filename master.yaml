@@ -198,7 +198,7 @@ Resources:
     Type: "AWS::CloudFormation::Stack"
     Condition: "UseProdEnv"
     DependsOn:
-    - "MyWEBELB"
+    - "MyJiraELB"
     Properties:
       TemplateURL: !Sub "${PMTemplateURL}/atlassian-autoscaling-jira.yaml"
       TimeoutInMinutes: '5'
