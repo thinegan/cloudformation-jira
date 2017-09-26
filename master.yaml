@@ -215,46 +215,6 @@ Resources:
         PMAutoscaleMax: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMax"]
         PMAutoscaleDes: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleDes"]
 
-
-
-  # MyMongoSEC2EC2:
-  #   Type: "AWS::CloudFormation::Stack"
-  #   Condition: "UseProdEnv"
-  #   DependsOn:
-  #   - "MySecurityGroup"
-  #   Properties:
-  #     TemplateURL: !Sub "${PMTemplateURL}/mongo-secondary2-ec2.yaml"
-  #     TimeoutInMinutes: '5'
-  #     Parameters:
-  #       PMServerEnv: !Ref "AWS::StackName"
-  #       PMKeyName: !Ref "PMKeyName"
-  #       PMMongoSecondary: !Ref "PMMongoSecondary"
-  #       PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
-  #       PMMongoReplicatesetName: !FindInMap ["EnvMap", !Ref "AWS::StackName", "MongoReplicatesetName"]
-  #       PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
-  #       PMDomainMongoSecondary2: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainMongoSecondary2"]
-  #       PMHostedZone: !Ref "PMHostedZone"
-
-  # MyMongoMSEC2:
-  #   Type: "AWS::CloudFormation::Stack"
-  #   Condition: "UseProdEnv"
-  #   DependsOn:
-  #   - "MyMongoSEC1EC2"
-  #   Properties:
-  #     TemplateURL: !Sub "${PMTemplateURL}/mongo-master-ec2.yaml"
-  #     TimeoutInMinutes: '5'
-  #     Parameters:
-  #       PMServerEnv: !Ref "AWS::StackName"
-  #       PMKeyName: !Ref "PMKeyName"
-  #       PMMongoMaster: !Ref "PMMongoMaster"
-  #       PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
-  #       PMMongoReplicatesetName: !FindInMap ["EnvMap", !Ref "AWS::StackName", "MongoReplicatesetName"]
-  #       PMDomainMongoSecondary1: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainMongoSecondary1"]
-  #       PMDomainMongoSecondary2: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainMongoSecondary2"]
-  #       PMDomainMongoMaster: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainMongoMaster"]
-  #       PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
-  #       PMHostedZone: !Ref "PMHostedZone"
-
   # MyDNS:
   #   Type: "AWS::CloudFormation::Stack"
   #   Condition: "UseProdEnv"
