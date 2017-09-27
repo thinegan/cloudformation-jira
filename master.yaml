@@ -54,6 +54,22 @@ Parameters:
       - "m4.large"
       - "m4.xlarge"
 
+  PMSpotPrice:
+    Description: 'Maximum spot price to bid in USD (e.g.: 0.32).'
+    Default: '0.01'
+    Type: Number
+
+  # Term: OnDemand
+  # Instance Type: t2.medium (2-CPU, 4GB-MEM)
+  # Region: US East (N.Virginia)
+  # Price: $0.047 per Hour
+
+  # Term: SPOT
+  # Instance Type: m3.medium (1-CPU, 3.75GB-MEM)
+  # Region: US East (N.Virginia)
+  # Price: $0.0094 per Hour (check pricing history)
+  # Bidding : $0.010
+
 ####### Condition Setup #######
 Conditions:
   UseProdEnv: !Equals [ !Ref "PMJiraInstanceType", "prod" ]
@@ -206,6 +222,7 @@ Resources:
         PMServerEnv: !Ref "AWS::StackName"
         PMKeyName: !Ref "PMKeyName"
         PMJiraInstanceType: !Ref "PMJiraInstanceType"
+        PMSpotPrice: !Ref "PMSpotPrice"
         PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
         PMMyJiraSG: !GetAtt "MySecurityGroup.Outputs.MyJiraSG"
         PMJiraLoadBalancer: !GetAtt "MyJiraELB.Outputs.JiraLoadBalancer"

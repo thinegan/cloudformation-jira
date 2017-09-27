@@ -31,6 +31,11 @@ Parameters:
       - "m4.large"
       - "m4.xlarge"
 
+  PMSpotPrice:
+    Description: 'Maximum spot price to bid in USD (e.g.: 0.32).'
+    Default: '0.01'
+    Type: Number
+
   PMPublicSubnets:
     Description: "Subnets to launch instances into"
     Type: "List<AWS::EC2::Subnet::Id>"
@@ -70,6 +75,8 @@ Resources:
   JiraLaunchConfiguration:
     Type: "AWS::AutoScaling::LaunchConfiguration"
     Properties:
+      SpotPrice:
+        Ref: "PMSpotPrice"
       AssociatePublicIpAddress: "true"
       KeyName:
         Ref: "PMKeyName"
