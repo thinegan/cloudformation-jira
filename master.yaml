@@ -236,7 +236,7 @@ Outputs:
     Value:
       Fn::Join:
         - ''
-        - - "http://"
+        - - "https://"
           - !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainJira"]
           - "/"
 
