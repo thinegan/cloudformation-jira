@@ -57,7 +57,7 @@ Parameters:
 
   PMSpotPrice:
     Description: "Maximum spot price to bid in USD (e.g.: 0.32)."
-    Default: '0.01'
+    Default: '0.02'
     Type: "Number"
 
   # Term: OnDemand
@@ -147,7 +147,7 @@ Resources:
 
   MyVPC:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    #Condition: "UseProdEnv"
     DependsOn:
     - "MyS3Bucket"
     Properties:

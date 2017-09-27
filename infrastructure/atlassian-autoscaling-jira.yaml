@@ -25,16 +25,9 @@ Parameters:
   PMJiraInstanceType: 
     Description: "Enter an instance type. Default is t2.micro."
     Type: "String"
-    AllowedValues: 
-      - "t2.micro"
-      - "t2.medium"
-      - "m3.medium"
-      - "m4.large"
-      - "m4.xlarge"
 
   PMSpotPrice:
     Description: "Maximum spot price to bid in USD (e.g.: 0.32)."
-    Default: '0.01'
     Type: "Number"
 
   PMPublicSubnets:
@@ -104,22 +97,22 @@ Resources:
           yum install docker htop telnet git awslogs python-pip aws-cfn-bootstrap -y
           yum update -y
 
-          echo "[plugins]
-          cwlogs = cwlogs
-          [default]
-          region = ${AWS::Region}" > /etc/awslogs/awscli.conf
-          service awslogs start
-          chkconfig awslogs on
+          # echo "[plugins]
+          # cwlogs = cwlogs
+          # [default]
+          # region = ${AWS::Region}" > /etc/awslogs/awscli.conf
+          # service awslogs start
+          # chkconfig awslogs on
 
-          useradd -u 1000 jira
-          mkdir -p /home/jira/jira-data
-          chown -R jira:jira /home/jira/jira-data
-          chmod -R +x /home/jira/jira-data
+          # useradd -u 1000 jira
+          # mkdir -p /home/jira/jira-data
+          # chown -R jira:jira /home/jira/jira-data
+          # chmod -R +x /home/jira/jira-data
 
-          service docker start
-          docker run -d -p 8000:8080 \
-          -v /home/jira/jira-data:/home/www/public_html/jira-data.server.com \
-          --name jira thinegan/debian-jira:v7.5.0
+          # service docker start
+          # docker run -d -p 8000:8080 \
+          # -v /home/jira/jira-data:/home/www/public_html/jira-data.server.com \
+          # --name jira thinegan/debian-jira:v7.5.0
 
           /opt/aws/bin/cfn-signal -e 0 -r 'server setup complete' "${WaitHandleWEB}"  > /tmp/userdata.log
 
