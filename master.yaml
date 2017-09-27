@@ -55,7 +55,7 @@ Parameters:
       - "m4.xlarge"
 
   PMSpotPrice:
-  Description: "Maximum spot price to bid in USD (e.g.: 0.32)."
+    Description: "Maximum spot price to bid in USD (e.g.: 0.32)."
     Default: '0.01'
     Type: "Number"
 
