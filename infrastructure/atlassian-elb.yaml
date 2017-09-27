@@ -54,12 +54,6 @@ Resources:
         Target: "TCP:8000"
         Timeout: '5'
         UnhealthyThreshold: '8'
-      # HealthCheck:
-      #   HealthyThreshold: '6'
-      #   Interval: '30'
-      #   Target: "HTTP:80/"
-      #   Timeout: '5'
-      #   UnhealthyThreshold: '8'
       LoadBalancerName: !Sub "${PMServerEnv}-ELB"
       Listeners:
       - LoadBalancerPort: '443'
@@ -69,17 +63,6 @@ Resources:
         SSLCertificateId: !Ref "PMDomain1CertARN"
         PolicyNames:
         - !Sub "${PMServerEnv}-SSLNegotiationPolicy"
-      # - InstancePort: '80'
-      #   InstanceProtocol: "HTTP"
-      #   LoadBalancerPort: '80'
-      #   Protocol: "HTTP"
-      # - LoadBalancerPort: '443'
-      #   Protocol: "HTTPS"
-      #   InstancePort: '80'
-      #   InstanceProtocol: "HTTP"
-      #   SSLCertificateId: !Ref "PMDomain1CertARN"
-      #   PolicyNames:
-      #   - !Sub "${PMServerEnv}-SSLNegotiationPolicy"
       # List aws elb describe-load-balancer-policies
       Policies:
       - PolicyName: !Sub "${PMServerEnv}-SSLNegotiationPolicy"
