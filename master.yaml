@@ -147,7 +147,7 @@ Resources:
 
   MyVPC:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    #Condition: "UseProdEnv"
     DependsOn:
     - "MyS3Bucket"
     Properties:
