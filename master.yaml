@@ -122,7 +122,8 @@ Mappings:
       # Update with your own cert ARN HERE!
       # Assuming you have already upload to AWS Certificate Manager
       CertARN: "arn:aws:acm:us-east-1:210406761874:certificate/6e8e02b1-bce8-43f3-9e00-23050cd6f1ff"
-
+      # AStorage - The storage class to which you want the object to transition.
+      AStorage: "GLACIER"
 ###############################################################################################################
 
 Resources:
@@ -144,6 +145,7 @@ Resources:
       TimeoutInMinutes: '5'
       Parameters:
         PMServerEnv: !Ref "AWS::StackName"
+        PMRegionAStorage: !FindInMap ["RegionMap", !Ref "AWS::Region", "AStorage"]
 
   MyVPC:
     Type: "AWS::CloudFormation::Stack"
