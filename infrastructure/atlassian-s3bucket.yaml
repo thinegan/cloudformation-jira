@@ -58,7 +58,9 @@ Resources:
           Effect: "Deny"
           Principal:
             AWS: "*"
-          Action: "s3:*"
+          #Action: "s3:*"
+          Action:
+          - s3:GetObject
           Resource: !Join ["", ["arn:aws:s3:::", !Ref "S3Backup", "/*"]]
           Condition:
             StringNotEquals:
