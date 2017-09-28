@@ -50,9 +50,9 @@ Resources:
         S3BucketPrefix: "ELBLogs"
       HealthCheck:
         HealthyThreshold: '6'
-        Interval: '30'
-        Target: "TCP:22"
-        #Target: "TCP:8000"
+        Interval: '60'
+        #Target: "TCP:22"
+        Target: "TCP:8000"
         Timeout: '5'
         UnhealthyThreshold: '8'
       LoadBalancerName: !Sub "${PMServerEnv}-ELB"
