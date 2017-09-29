@@ -55,13 +55,15 @@ Resources:
         Version: '2008-10-17'
         Id: Policy1376976828589
         Statement:
-        - Sid: Stmt1376976826840
+        - Sid: "DenyUnEncryptedObjectUploads"
+        # - Sid: Stmt1376976826840
           Action:
-          - s3:GetObject
+          # - s3:GetObject
           - s3:PutObjectAcl
           - s3:PutObject
-          - s3:DeleteObject
-          Effect: Allow
+          # - s3:DeleteObject
+          # Effect: Allow
+          Effect: "Deny"
           Resource:
             Fn::Join:
             - ''
