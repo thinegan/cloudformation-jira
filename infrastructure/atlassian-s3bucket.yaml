@@ -34,7 +34,7 @@ Resources:
   S3Backup:
     Type: "AWS::S3::Bucket"
     Properties:
-      BucketName: !Sub "${PMServerEnv}-jirabackup"
+      #BucketName: !Sub "${PMServerEnv}-jirabackup"
       AccessControl: "Private"
       VersioningConfiguration:
         Status: "Enabled"
