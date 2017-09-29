@@ -103,9 +103,9 @@ Resources:
               - Ref: S3Backup
               - "/*"
           #Resource: !Join ["", ["arn:aws:s3:::", !Ref "S3Backup", "/*"]]
-          # Condition:
-          #   StringNotEquals:
-          #     s3:x-amz-server-side-encryption: "AES256"
+          Condition:
+            StringNotEquals:
+              s3:x-amz-server-side-encryption: "AES256"
 
   ############################################################################
   # S3 Logging Bucket Data Encrypted Bucket
