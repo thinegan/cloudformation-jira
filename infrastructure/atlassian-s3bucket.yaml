@@ -31,7 +31,7 @@ Resources:
   # S3 Backup Data Encrypted Bucket
   ############################################################################
 
-S3Backup:
+  S3Backup:
     Type: "AWS::S3::Bucket"
     Properties:
       AccessControl: "Private"
