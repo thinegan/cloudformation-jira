@@ -59,7 +59,11 @@ Resources:
           Principal:
             AWS: "*"
           Action:
-          - "s3:*"
+          # - "s3:*"
+          - "s3:GetObject"
+          - "s3:PutObjectAcl"
+          - "s3:PutObject"
+          - "s3:DeleteObject"
           Resource: !Join ["", ["arn:aws:s3:::", !Ref "S3Backup", "/*"]]
           Condition:
             StringNotEquals:

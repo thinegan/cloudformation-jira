@@ -139,7 +139,7 @@ Resources:
 
   MyS3Bucket:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    #Condition: "UseProdEnv"
     Properties:
       TemplateURL: !Sub "${PMTemplateURL}/atlassian-s3bucket.yaml"
       TimeoutInMinutes: '5'
