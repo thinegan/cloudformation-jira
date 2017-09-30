@@ -106,6 +106,10 @@ Resources:
 
           useradd -u 1000 jira
           mkdir -p /home/jira/jira-data
+          
+          # Restore Jira Data if exist
+          /usr/bin/aws s3 sync --sse AES256 /home/jira/ s3://dev-mys3bucket-1fkq1gtzkx8uk-s3backup-n8w7q6mofqyo/ /home/jira/
+
           chown -R jira:jira /home/jira/jira-data
           chmod -R +x /home/jira/jira-data
 
@@ -116,8 +120,8 @@ Resources:
 
           # Backup Jira Data. Sync every 5 minutes
           #/usr/bin/crontab -l > /tmp/mycron
-          #echo '# Cron Upload' >> /tmp/mycron
-          echo '*/5 * * * * /usr/bin/aws s3 sync --sse AES256 /home/jira/ s3://dev-mys3bucket-1fkq1gtzkx8uk-s3backup-n8w7q6mofqyo/ > /var/log/jirasync.log 2>&1' > /tmp/mycron
+          echo '# Cron Upload' > /tmp/mycron
+          echo '*/5 * * * * /usr/bin/aws s3 sync --sse AES256 /home/jira/ s3://dev-mys3bucket-1fkq1gtzkx8uk-s3backup-n8w7q6mofqyo/ > /var/log/jirasync.log 2>&1' >> /tmp/mycron
           /usr/bin/crontab /tmp/mycron
           rm -rf /tmp/mycron
 
