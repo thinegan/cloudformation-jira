@@ -31,10 +31,9 @@ Resources:
   # S3 Backup Data Encrypted Bucket
   ############################################################################
 
-  S3Backup:
+S3Backup:
     Type: "AWS::S3::Bucket"
     Properties:
-      #BucketName: !Sub "${PMServerEnv}-jirabackup"
       AccessControl: "Private"
       VersioningConfiguration:
         Status: "Enabled"
@@ -58,27 +57,60 @@ Resources:
           Effect: "Deny"
           Principal:
             AWS: "*"
-          Action:
-          - "s3:*"
-          #- "s3:GetObject"
-          #- "s3:PutObjectAcl"
-          #- "s3:PutObject"
-          #- "s3:DeleteObject"
-          # Resource: !Join ["", ["arn:aws:s3:::", !Ref "S3Backup", "/*"]]
-          Resource:
-            Fn::Join:
-            - ''
-            - - 'arn:aws:s3:::'
-              - Ref: S3Backup
-              - "/*"
-            Fn::Join:
-            - ''
-            - - 'arn:aws:s3:::'
-              - Ref: S3Backup
-              - "/"
+          Action: "s3:PutObject"
+          Resource: !Join ["", ["arn:aws:s3:::", !Ref "S3Backup", "/*"]]
           Condition:
             StringNotEquals:
               s3:x-amz-server-side-encryption: "AES256"
+
+  # S3Backup:
+  #   Type: "AWS::S3::Bucket"
+  #   Properties:
+  #     #BucketName: !Sub "${PMServerEnv}-jirabackup"
+  #     AccessControl: "Private"
+  #     VersioningConfiguration:
+  #       Status: "Enabled"
+  #     LifecycleConfiguration:
+  #       Rules:
+  #       - Id: "MyBackupArchive"
+  #         Status: "Enabled"
+  #         ExpirationInDays: '365' # Complete Disposal/Deletion of Data after 1 year
+  #         Transition:
+  #           TransitionInDays: '60' # Move Data from S3 bucket to Archive after 60 days.
+  #           StorageClass: !Ref "PMRegionAStorage"
+  #   DeletionPolicy: "Retain"
+
+  # S3BackupPolicy:
+  #   Type: "AWS::S3::BucketPolicy"
+  #   Properties:
+  #     Bucket: !Ref "S3Backup"
+  #     PolicyDocument:
+  #       Statement:
+  #       - Sid: "DenyUnEncryptedObjectUploads"
+  #         Effect: "Deny"
+  #         Principal:
+  #           AWS: "*"
+  #         Action:
+  #         - "s3:*"
+  #         #- "s3:GetObject"
+  #         #- "s3:PutObjectAcl"
+  #         #- "s3:PutObject"
+  #         #- "s3:DeleteObject"
+  #         # Resource: !Join ["", ["arn:aws:s3:::", !Ref "S3Backup", "/*"]]
+  #         Resource:
+  #           Fn::Join:
+  #           - ''
+  #           - - 'arn:aws:s3:::'
+  #             - Ref: S3Backup
+  #             - "/*"
+  #           Fn::Join:
+  #           - ''
+  #           - - 'arn:aws:s3:::'
+  #             - Ref: S3Backup
+  #             - "/"
+  #         Condition:
+  #           StringNotEquals:
+  #             s3:x-amz-server-side-encryption: "AES256"
 
   # BucketPolicy:
   #   Type: AWS::S3::BucketPolicy
