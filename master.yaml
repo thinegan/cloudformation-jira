@@ -149,7 +149,7 @@ Resources:
 
   MyVPC:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    #Condition: "UseProdEnv"
     DependsOn:
     - "MyS3Bucket"
     Properties:
@@ -166,7 +166,7 @@ Resources:
 
   MySecurityGroup:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    #Condition: "UseProdEnv"
     DependsOn:
     - "MyVPC"
     Properties:
@@ -180,7 +180,7 @@ Resources:
 
   MyRDS:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    #Condition: "UseProdEnv"
     DependsOn:
     - "MySecurityGroup"
     Properties:
@@ -199,7 +199,7 @@ Resources:
 
   MyJiraELB:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    #Condition: "UseProdEnv"
     DependsOn:
     - "MyRDS"
     Properties:
