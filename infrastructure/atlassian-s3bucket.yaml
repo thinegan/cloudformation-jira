@@ -60,7 +60,7 @@ Resources:
             AWS: "*"
           Action:
           - "s3:PutObject"
-          # Action: "s3:PutObject"
+          - "s3:PutObjectAcl"
           Resource: !Join ["", ["arn:aws:s3:::", !Ref "S3Backup", "/*"]]
           Condition:
             StringNotEquals:
