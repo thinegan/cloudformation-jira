@@ -48,35 +48,53 @@ Resources:
             StorageClass: !Ref "PMRegionAStorage"
     DeletionPolicy: "Retain"
 
-  BucketPolicy:
-    Type: AWS::S3::BucketPolicy
+  S3BackupPolicy:
+    Type: "AWS::S3::BucketPolicy"
     Properties:
+      Bucket: !Ref "S3Backup"
       PolicyDocument:
-        Version: '2008-10-17'
-        Id: Policy1376976828589
         Statement:
         - Sid: "DenyUnEncryptedObjectUploads"
-        # - Sid: Stmt1376976826840
-          Action:
-          # - s3:GetObject
-          - s3:PutObjectAcl
-          - s3:PutObject
-          # - s3:DeleteObject
-          # Effect: Allow
           Effect: "Deny"
-          Resource:
-            Fn::Join:
-            - ''
-            - - 'arn:aws:s3:::'
-              - Ref: S3Backup
-              - "/*"
           Principal:
             AWS: "*"
+          Action:
+          - "s3:PutObject"
+          # Action: "s3:PutObject"
+          Resource: !Join ["", ["arn:aws:s3:::", !Ref "S3Backup", "/*"]]
           Condition:
             StringNotEquals:
               s3:x-amz-server-side-encryption: "AES256"
-      Bucket:
-        Ref: S3Backup
+
+  # BucketPolicy:
+  #   Type: AWS::S3::BucketPolicy
+  #   Properties:
+  #     PolicyDocument:
+  #       Version: '2008-10-17'
+  #       Id: Policy1376976828589
+  #       Statement:
+  #       - Sid: "DenyUnEncryptedObjectUploads"
+  #       # - Sid: Stmt1376976826840
+  #         Action:
+  #         # - s3:GetObject
+  #         - s3:PutObjectAcl
+  #         - s3:PutObject
+  #         # - s3:DeleteObject
+  #         # Effect: Allow
+  #         Effect: "Deny"
+  #         Resource:
+  #           Fn::Join:
+  #           - ''
+  #           - - 'arn:aws:s3:::'
+  #             - Ref: S3Backup
+  #             - "/*"
+  #         Principal:
+  #           AWS: "*"
+  #         Condition:
+  #           StringNotEquals:
+  #             s3:x-amz-server-side-encryption: "AES256"
+  #     Bucket:
+  #       Ref: S3Backup
 
 
 
