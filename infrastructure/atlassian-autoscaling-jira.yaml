@@ -117,9 +117,9 @@ Resources:
           # Backup Jira Data. Sync every 5 minutes
           crontab -l > mycron
           echo "# Upload" >> mycron
-          echo "*/5 * * * * /usr/bin/aws s3 sync --sse AES256 /home/jira/ s3://dev-mys3bucket-1fkq1gtzkx8uk-s3backup-n8w7q6mofqyo/ > /var/log/jirasync.log 2>&1" >> mycron
-          crontab mycron
-          rm -rf mycron
+          #echo "*/5 * * * * /usr/bin/aws s3 sync --sse AES256 /home/jira/ s3://dev-mys3bucket-1fkq1gtzkx8uk-s3backup-n8w7q6mofqyo/ > /var/log/jirasync.log 2>&1" >> mycron
+          #crontab mycron
+          #rm -rf mycron
 
           /opt/aws/bin/cfn-signal -e 0 -r 'server setup complete' "${WaitHandleWEB}"  > /tmp/userdata.log
 
