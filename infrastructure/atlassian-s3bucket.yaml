@@ -96,6 +96,6 @@ Outputs:
     Description: "S3 Logging Bucket Name"
     Value: !Ref "S3Logging"
 
-  # S3Backup:
-  #   Description: "S3 Backup Bucket Name"
-  #   Value: !Ref "S3Backup"
+  S3Backup:
+    Description: "S3 Backup Bucket Name"
+    Value: !Ref "S3Backup"
