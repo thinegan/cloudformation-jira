@@ -116,7 +116,7 @@ Resources:
           service docker start
           docker run -d -p 8000:8080 \
           -v /home/jira/jira-data:/home/www/public_html/jira-data.server.com \
-          --name jira thinegan/debian-jira:v7.5.0
+          --name jira thinegan/debian-jira:latest
 
           # Backup Jira Data. Sync every 5 minutes
           #/usr/bin/crontab -l > /tmp/mycron
