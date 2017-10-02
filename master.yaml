@@ -265,6 +265,14 @@ Outputs:
           - !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainJira"]
           - "/"
 
+  RDSserver:
+    Description: "RDS EndPoint Domain"
+    Value:
+      Fn::Join:
+        - ''
+        - - !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainRds"]
+          - ":3306"
+
   # Own Certs
   # https://cloudonaut.io/pitfall-acm-certificate-cloudfront-cloudformation/
   # Error : The specified SSL certificate doesn't exist, isn't valid, or doesn't include a valid certificate chain.
