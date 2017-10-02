@@ -86,6 +86,7 @@ Mappings:
       AutoscaleMax: '1'
       AutoscaleDes: '1'
       DomainJira: "dev-jira.crytera.com"
+      DomainRds: "dev-rds.crytera.com"
       PMVpcCIDR: "10.0.0.0/16"
       PMPublicSubnet1CIDR: "10.0.1.0/24"
       PMPublicSubnet2CIDR: "10.0.2.0/24"
@@ -97,6 +98,7 @@ Mappings:
       AutoscaleMax: '1'
       AutoscaleDes: '1'
       DomainJira: "staging-jira.crytera.com"
+      DomainRds: "staging-rds.crytera.com"
       PMVpcCIDR: "10.1.0.0/16"
       PMPublicSubnet1CIDR: "10.1.1.0/24"
       PMPublicSubnet2CIDR: "10.1.2.0/24"
@@ -108,6 +110,7 @@ Mappings:
       AutoscaleMax: '1'
       AutoscaleDes: '1'
       DomainJira: "prod-jira.crytera.com"
+      DomainRds: "prod-rds.crytera.com"
       PMVpcCIDR: "10.2.0.0/16"
       PMPublicSubnet1CIDR: "10.2.1.0/24"
       PMPublicSubnet2CIDR: "10.2.2.0/24"
@@ -244,9 +247,11 @@ Resources:
       TemplateURL: !Sub "${PMTemplateURL}/atlassian-route53.yaml"
       TimeoutInMinutes: '5'
       Parameters:
+        PMRdsDbEndpoint: !GetAtt "MyRDS.Outputs.RdsDbEndpoint"
         PMJiraLBDNSName: !GetAtt "MyJiraELB.Outputs.JiraLBDNSName"
         PMJiraLBHostedZoneId: !GetAtt "MyJiraELB.Outputs.JiraLBHostedZoneId"
         PMDomainJira: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainJira"]
+        PMDomainRds: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainRds"]
         PMHostedZone: !Ref "PMHostedZone"
 
 Outputs:

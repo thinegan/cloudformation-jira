@@ -137,8 +137,8 @@ Outputs:
     Description: "RDS Database Name"
     Value: !Ref "DatabaseName"
 
-  RdsDbURL:
-    Description: "RDS Database URL"
+  RdsDbEndpoint:
+    Description: "RDS Database Endpoint"
     Value: !GetAtt "Database.Endpoint.Address"
 
   DbUser:
