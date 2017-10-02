@@ -46,17 +46,23 @@ Resources:
         AliasTarget:
           HostedZoneId: !Ref "PMJiraLBHostedZoneId"
           DNSName: !Ref "PMJiraLBDNSName"
+      - Name: !Sub "${PMDomainRds}."
+        Type: 'CNAME'
+        TTL: '900'
+        ResourceRecords:
+        - !Sub "${PMRdsDbEndpoint}"
 
-  RdsRoute53:
-    Type: "AWS::Route53::RecordSet"
-    Properties:
-      HostedZoneName: !Sub "${PMHostedZone}."
-      Comment: "CNAME redirect custom name to RDS Endpoint."
-      Name: "${PMDomainRds}."
-      Type: 'CNAME'
-      TTL: '900'
-      ResourceRecords:
-      - !Sub "${PMRdsDbEndpoint}"
+  # RdsRoute53:
+  #   Type: "AWS::Route53::RecordSetGroup"
+  #   Properties:
+  #     HostedZoneName: !Sub "${PMHostedZone}."
+  #     Comment: "CNAME redirect custom name to RDS Endpoint."
+  #     Name: "${PMDomainRds}."
+  #     Type: 'CNAME'
+  #     TTL: '900'
+  #     ResourceRecords:
+  #     - !Sub "${PMRdsDbEndpoint}"
+# 	RRSet with DNS name \044\173pmdomainrds\175. is not permitted in zone crytera.com.
 
 Outputs:
 
