@@ -218,7 +218,7 @@ Resources:
 
   MyJiraAutoScaling:
     Type: "AWS::CloudFormation::Stack"
-    #Condition: "UseProdEnv"
+    Condition: "UseProdEnv"
     DependsOn:
     - "MyJiraELB"
     Properties:
@@ -232,6 +232,7 @@ Resources:
         PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
         PMMyJiraSG: !GetAtt "MySecurityGroup.Outputs.MyJiraSG"
         PMJiraLoadBalancer: !GetAtt "MyJiraELB.Outputs.JiraLoadBalancer"
+        PMS3Backup: !GetAtt "MyS3Bucket.Outputs.S3Backup"
         PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
         PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
         PMAutoscaleMin: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMin"]
@@ -240,7 +241,7 @@ Resources:
 
   MyDNS:
     Type: "AWS::CloudFormation::Stack"
-    #Condition: "UseProdEnv"
+    Condition: "UseProdEnv"
     DependsOn:
     - "MyJiraAutoScaling"
     Properties:
