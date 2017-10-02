@@ -47,17 +47,17 @@ Resources:
           HostedZoneId: !Ref "PMJiraLBHostedZoneId"
           DNSName: !Ref "PMJiraLBDNSName"
 
-  RdsRoute53:
-    Type: "AWS::Route53::RecordSetGroup"
-    Properties:
-      HostedZoneName: !Sub "${PMHostedZone}."
-      Comment: "Zone apex CNAME to RDS Endpoint."
-      RecordSets:
-      - Name: "${PMDomainRds}."
-        Type: 'CNAME'
-        TTL: '300'
-        ResourceRecords:
-        - !Sub "${PMRdsDbEndpoint}"
+  # RdsRoute53:
+  #   Type: "AWS::Route53::RecordSetGroup"
+  #   Properties:
+  #     HostedZoneName: !Sub "${PMHostedZone}."
+  #     Comment: "Zone apex CNAME to RDS Endpoint."
+  #     RecordSets:
+  #     - Name: "${PMDomainRds}."
+  #       Type: 'CNAME'
+  #       TTL: '300'
+  #       ResourceRecords:
+  #       - !Sub "${PMRdsDbEndpoint}"
 
 Outputs:
 
@@ -65,6 +65,6 @@ Outputs:
     Description: "A reference to the Route53"
     Value: !Ref "Route53"
 
-  RdsRoute53:
-    Description: "A reference to the Route53"
-    Value: !Ref "RdsRoute53"
+  # RdsRoute53:
+  #   Description: "A reference to the Route53"
+  #   Value: !Ref "RdsRoute53"
