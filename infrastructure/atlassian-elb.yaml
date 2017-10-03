@@ -57,6 +57,10 @@ Resources:
         UnhealthyThreshold: '8'
       LoadBalancerName: !Sub "${PMServerEnv}-ELB"
       Listeners:
+      - LoadBalancerPort: '80'
+        Protocol: "HTTP"
+        InstancePort: '8000'
+        InstanceProtocol: "HTTP"
       - LoadBalancerPort: '443'
         Protocol: "HTTPS"
         InstancePort: '8000'
