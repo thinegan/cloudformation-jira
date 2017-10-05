@@ -57,7 +57,7 @@ Parameters:
 
   PMSpotPrice:
     Description: "Maximum spot price to bid in USD (e.g.: 0.32)."
-    Default: '0.02'
+    Default: '0.03'
     Type: "Number"
 
   # Term: OnDemand
@@ -218,7 +218,7 @@ Resources:
 
   MyJiraAutoScaling:
     Type: "AWS::CloudFormation::Stack"
-    # Condition: "UseProdEnv"
+    Condition: "UseProdEnv"
     DependsOn:
     - "MyJiraELB"
     Properties:
@@ -241,7 +241,7 @@ Resources:
 
   MyDNS:
     Type: "AWS::CloudFormation::Stack"
-    # Condition: "UseProdEnv"
+    Condition: "UseProdEnv"
     DependsOn:
     - "MyJiraAutoScaling"
     Properties:
