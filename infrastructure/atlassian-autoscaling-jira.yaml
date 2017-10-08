@@ -119,8 +119,8 @@ Resources:
           echo "server {
           listen 80;
           server_name ${PMDomainJira};
-          if (\$http_x_forwarded_proto != "https") {
-          rewrite ^(.*)\$ https://\$server_name\$REQUEST_URI permanent;
+          if (\$http_x_forwarded_proto != \"https\") {
+          rewrite ^(.*)\$ https://${PMDomainJira}\$REQUEST_URI permanent;
           }
           }" > /etc/nginx/sites-available/${PMDomainJira}
 
