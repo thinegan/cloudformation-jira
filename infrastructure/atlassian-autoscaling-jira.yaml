@@ -221,7 +221,6 @@ Resources:
           # Backup Jira Data. Sync every 5 minutes
           echo '# Cron Upload' > /tmp/mycron
           echo '*/5 * * * * /usr/bin/aws s3 sync --sse AES256 /home/jira/ s3://${PMS3Backup}/ > /var/log/jirasync.log 2>&1' >> /tmp/mycron
-          echo '*/7 * * * * /usr/bin/aws s3 sync --sse AES256 s3://${PMS3Backup}/ /home/jira/ > /var/log/jirasync.log 2>&1' >> /tmp/mycron
           /usr/bin/crontab /tmp/mycron
           rm -rf /tmp/mycron
 
