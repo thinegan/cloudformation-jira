@@ -59,7 +59,7 @@ Resources:
       Listeners:
       - LoadBalancerPort: '80'
         Protocol: "HTTP"
-        InstancePort: '8000'
+        InstancePort: '80'
         InstanceProtocol: "HTTP"
       - LoadBalancerPort: '443'
         Protocol: "HTTPS"
