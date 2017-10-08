@@ -39,6 +39,8 @@ Resources:
   MyLoadBalancer:
     Type: "AWS::ElasticLoadBalancing::LoadBalancer"
     Properties:
+      ConnectionSettings:
+        IdleTimeout: '300'
       ConnectionDrainingPolicy:
         Enabled: "true"
         Timeout: "30"
