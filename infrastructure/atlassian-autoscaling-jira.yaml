@@ -117,9 +117,11 @@ Resources:
           mkdir -p /etc/nginx/sites-available
 
           echo "server {
-          server_name ${PMDomainJira};
-          rewrite ^ https://\$server_name\$request_uri? permanent;
           listen 80;
+          server_name ${PMDomainJira};
+          if (\$http_x_forwarded_proto != "https") {
+          rewrite ^(.*)\$ https://\$server_name\$REQUEST_URI permanent;
+          }
           }" > /etc/nginx/sites-available/${PMDomainJira}
 
           ln -sf /etc/nginx/sites-available/${PMDomainJira} /etc/nginx/sites-enabled/
