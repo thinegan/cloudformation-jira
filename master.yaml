@@ -235,6 +235,7 @@ Resources:
         PMS3Backup: !GetAtt "MyS3Bucket.Outputs.S3Backup"
         PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
         PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
+        PMDomainJira: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainJira"]
         PMAutoscaleMin: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMin"]
         PMAutoscaleMax: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMax"]
         PMAutoscaleDes: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleDes"]

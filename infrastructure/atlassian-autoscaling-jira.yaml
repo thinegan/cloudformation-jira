@@ -18,6 +18,10 @@ Parameters:
       - "staging"
       - "prod"
 
+  PMDomainJira:
+    Description: "A reference to the Jira FQDN domain name"
+    Type: "String"
+
   PMKeyName:
     Description: "Enter an existing EC2 KeyPair. Default is MyEC2Key"
     Type: "String"
@@ -98,7 +102,7 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash -xe
-          yum install docker htop telnet git awslogs python-pip aws-cfn-bootstrap -y
+          yum install nginx docker htop telnet git awslogs python-pip aws-cfn-bootstrap -y
           yum update -y
 
           echo "[plugins]
@@ -108,6 +112,21 @@ Resources:
           service awslogs start
           chkconfig awslogs on
 
+          # Install Nginx (redirect http to https)
+          mkdir -p /etc/nginx/sites-enabled
+          mkdir -p /etc/nginx/sites-available
+
+          echo "server {
+          server_name ${PMDomainJira};
+          rewrite ^ https://\$server_name\$request_uri? permanent;
+          listen 80;
+          }" > /etc/nginx/sites-available/${PMDomainJira}
+
+          ln -sf /etc/nginx/sites-available/${PMDomainJira} /etc/nginx/sites-enabled/
+          service nginx start
+          chkconfig nginx on
+
+          # Setup Jira
           useradd -u 1000 jira
           mkdir -p /home/jira/jira-data
           
