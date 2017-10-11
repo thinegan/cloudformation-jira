@@ -54,7 +54,7 @@
 
                    maxThreads="150"
                    minSpareThreads="25"
-                   connectionTimeout="20000"
+                   connectionTimeout="20000" scheme="https" proxyName="dev-jira.crytera.com" proxyPort="443"
 
                    enableLookups="false"
                    maxHttpHeaderSize="8192"
