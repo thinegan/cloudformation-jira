@@ -216,7 +216,6 @@ Resources:
           service docker start
           docker run -d -p 8000:8080 \
           -v /home/jira/jira-data:/home/www/public_html/jira-data.server.com \
-          -v $PWD/conf/server.xml:/home/www/public_html/jira-install.server.com/conf/server.xml \
           -e JIRASERVERNAME=${PMDomainJira} \
           --name jira thinegan/debian-jira:latest
 
