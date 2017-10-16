@@ -209,6 +209,7 @@ Resources:
           
           # Restore Jira Data if exist
           /usr/bin/aws s3 sync --sse AES256 s3://${PMS3Backup}/ /home/jira/
+          sleep 60
 
           chown -R jira:jira /home/jira/jira-data
           chmod -R +x /home/jira/jira-data
