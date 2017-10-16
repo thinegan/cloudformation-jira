@@ -145,7 +145,8 @@ Resources:
         Type: 'CNAME'
         TTL: '900'
         ResourceRecords:
-        - !GetAtt "Database.Endpoint.Address"
+        - !Sub "${RdsDbEndpoint}"
+        # - !GetAtt "Database.Endpoint.Address"
 
 Outputs:
 
