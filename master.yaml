@@ -199,6 +199,8 @@ Resources:
         DatabaseInstanceClass: "db.t2.micro"
         PMRDSSG: !GetAtt "MySecurityGroup.Outputs.MyRDSSG"
         PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
+        PMDomainRds: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainRds"]
+        PMHostedZone: !Ref "PMHostedZone"
 
   MyJiraELB:
     Type: "AWS::CloudFormation::Stack"

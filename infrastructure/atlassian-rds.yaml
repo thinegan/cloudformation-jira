@@ -19,6 +19,14 @@ Parameters:
       - "staging"
       - "prod"
 
+  PMDomainRds:
+    Description: "A reference to the RDS FQDN domain name"
+    Type: "String"
+
+  PMHostedZone:
+    Description: "A reference to the Hosted Zone"
+    Type: "String"
+
   PMPrivateSubnets:
     Description: "Subnets to launch instances into"
     Type: "List<AWS::EC2::Subnet::Id>"
@@ -126,6 +134,18 @@ Resources:
         collation_connection: "utf8_bin"
         collation_server: "utf8_bin"
         max_allowed_packet : "16777216"
+
+  RDSCname:
+    Type: "AWS::Route53::RecordSetGroup"
+    Properties:
+      HostedZoneName: !Sub "${PMHostedZone}."
+      Comment: "Zone apex alias targeted to myELB LoadBalancer."
+      RecordSets:
+      - Name: !Sub "${PMDomainRds}."
+        Type: 'CNAME'
+        TTL: '900'
+        ResourceRecords:
+        - !GetAtt "Database.Endpoint.Address"
 
 Outputs:
 
