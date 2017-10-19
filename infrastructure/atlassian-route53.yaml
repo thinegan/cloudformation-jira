@@ -12,10 +12,6 @@ Parameters:
     Description: "A reference to the Jira FQDN domain name"
     Type: "String"
 
-  # PMDomainRds:
-  #   Description: "A reference to the RDS FQDN domain name"
-  #   Type: "String"
-
   PMHostedZone:
     Description: "A reference to the Hosted Zone"
     Type: "String"
@@ -24,10 +20,6 @@ Parameters:
     Description: "A reference to the Jira ELB DNS Name"
     Type: "String"
 
-  # PMRdsDbEndpoint:
-  #   Description: "A reference to the RDS Url Endpoint"
-  #   Type: "String"
-  
   PMJiraLBHostedZoneId:
     Description: "A reference to the Jira ELB Hosted Zone ID"
     Type: "String"
@@ -46,11 +38,6 @@ Resources:
         AliasTarget:
           HostedZoneId: !Ref "PMJiraLBHostedZoneId"
           DNSName: !Ref "PMJiraLBDNSName"
-      # - Name: !Sub "${PMDomainRds}."
-      #   Type: 'CNAME'
-      #   TTL: '900'
-      #   ResourceRecords:
-      #   - !Sub "${PMRdsDbEndpoint}"
 
 Outputs:
 
