@@ -82,9 +82,9 @@ Mappings:
   EnvMap:
 
     dev:
-      AutoscaleMin: '1'
-      AutoscaleMax: '1'
-      AutoscaleDes: '1'
+      # AutoscaleMin: '1'
+      # AutoscaleMax: '1'
+      # AutoscaleDes: '1'
       DomainJira: "dev-jira.crytera.com"
       DomainRds: "dev-rds.crytera.com"
       PMVpcCIDR: "10.0.0.0/16"
@@ -94,9 +94,9 @@ Mappings:
       PMPrivateSubnet2CIDR: "10.0.4.0/24"
 
     staging:
-      AutoscaleMin: '1'
-      AutoscaleMax: '1'
-      AutoscaleDes: '1'
+      # AutoscaleMin: '1'
+      # AutoscaleMax: '1'
+      # AutoscaleDes: '1'
       DomainJira: "staging-jira.crytera.com"
       DomainRds: "staging-rds.crytera.com"
       PMVpcCIDR: "10.1.0.0/16"
@@ -106,9 +106,9 @@ Mappings:
       PMPrivateSubnet2CIDR: "10.1.4.0/24"
 
     prod:
-      AutoscaleMin: '1'
-      AutoscaleMax: '1'
-      AutoscaleDes: '1'
+      # AutoscaleMin: '1'
+      # AutoscaleMax: '1'
+      # AutoscaleDes: '1'
       DomainJira: "prod-jira.crytera.com"
       DomainRds: "prod-rds.crytera.com"
       PMVpcCIDR: "10.2.0.0/16"
@@ -238,9 +238,12 @@ Resources:
         PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
         PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
         PMDomainJira: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainJira"]
-        PMAutoscaleMin: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMin"]
-        PMAutoscaleMax: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMax"]
-        PMAutoscaleDes: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleDes"]
+        PMAutoscaleMin: '1'
+        PMAutoscaleMax: '1'
+        PMAutoscaleDes: '1'
+        # PMAutoscaleMin: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMin"]
+        # PMAutoscaleMax: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMax"]
+        # PMAutoscaleDes: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleDes"]
 
   MyDNS:
     Type: "AWS::CloudFormation::Stack"
