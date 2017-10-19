@@ -251,11 +251,9 @@ Resources:
       TemplateURL: !Sub "${PMTemplateURL}/atlassian-route53.yaml"
       TimeoutInMinutes: '5'
       Parameters:
-        # PMRdsDbEndpoint: !GetAtt "MyRDS.Outputs.RdsDbEndpoint"
         PMJiraLBDNSName: !GetAtt "MyJiraELB.Outputs.JiraLBDNSName"
         PMJiraLBHostedZoneId: !GetAtt "MyJiraELB.Outputs.JiraLBHostedZoneId"
         PMDomainJira: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainJira"]
-        # PMDomainRds: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainRds"]
         PMHostedZone: !Ref "PMHostedZone"
 
 Outputs:
