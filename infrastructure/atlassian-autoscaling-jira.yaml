@@ -30,9 +30,13 @@ Parameters:
   #   Description: "Maximum spot price to bid in USD (e.g.: 0.32)."
   #   Type: "Number"
 
-  PMPublicSubnets:
+  PMPrivateSubnets:
     Description: "Subnets to launch instances into"
     Type: "List<AWS::EC2::Subnet::Id>"
+
+  # PMPublicSubnets:
+  #   Description: "Subnets to launch instances into"
+  #   Type: "List<AWS::EC2::Subnet::Id>"
 
   PMMyJiraSG:
     Description: "Select the Security Group to use for the EC2 hosts"
@@ -242,7 +246,8 @@ Resources:
       LaunchConfigurationName:
         Ref: "JiraLaunchConfiguration"
       VPCZoneIdentifier:
-        Ref: "PMPublicSubnets"
+        # Ref: "PMPublicSubnets"
+        Ref: "PMPrivateSubnets"
       LoadBalancerNames:
       - Ref: "PMJiraLoadBalancer"
       HealthCheckGracePeriod: "300"

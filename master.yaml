@@ -175,7 +175,7 @@ Resources:
 
   MyJiraELB:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    # Condition: "UseProdEnv"
     DependsOn:
     - "MyRDS"
     Properties:
@@ -207,7 +207,8 @@ Resources:
         PMJiraLoadBalancer: !GetAtt "MyJiraELB.Outputs.JiraLoadBalancer"
         PMS3Backup: !GetAtt "MyS3Bucket.Outputs.S3Backup"
         PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
-        PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
+        # PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
+        PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
         PMDomainJira: !Sub "${AWS::StackName}-${DomainJiraPrefix}"
         PMAutoscaleMin: '1'
         PMAutoscaleMax: '1'
