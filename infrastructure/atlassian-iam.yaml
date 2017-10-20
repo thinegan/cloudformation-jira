@@ -13,10 +13,6 @@ Parameters:
     Description: "Server Environment name."
     ConstraintDescription: "Invalid environment name. Choose an environment from the list"
     Type: "String"
-    AllowedValues: 
-      - "dev"
-      - "staging"
-      - "prod"
 
 Resources:
 

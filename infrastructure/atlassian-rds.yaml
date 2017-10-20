@@ -14,10 +14,6 @@ Parameters:
     Description: "Server Environment name."
     ConstraintDescription: "Choose an Environment from the drop down"
     Type: "String"
-    AllowedValues: 
-      - "dev"
-      - "staging"
-      - "prod"
 
   PMDomainRds:
     Description: "A reference to the RDS FQDN domain name"

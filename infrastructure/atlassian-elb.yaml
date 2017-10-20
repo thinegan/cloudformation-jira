@@ -13,10 +13,6 @@ Parameters:
     Description: "Server Environment name."
     ConstraintDescription: "Choose an Environment from the drop down"
     Type: "String"
-    AllowedValues: 
-      - "dev"
-      - "staging"
-      - "prod"
 
   PMJiraELBSG:
     Description: "Select the Security Group to use for the ELB"
