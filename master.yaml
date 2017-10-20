@@ -39,8 +39,17 @@ Parameters:
     Description: "Enter an existing Hosted Zone."
     Type: "String"
 
+  DomainJiraPrefix:
+    Default: "jira.crytera.com"
+    Description: "Enter an sub domain prefix."
+    Type: "String"
+
+  DomainRdsPrefix:
+    Default: "rds.crytera.com"
+    Description: "Enter an sub domain prefix."
+    Type: "String"
+
   PMDatabasePassword:
-    Default: "0bee082a464" #Sample password do not use. Make new pass from parameter.
     Description: "Enter a password."
     Type: "String"
 
@@ -54,6 +63,26 @@ Parameters:
       - "m3.medium"
       - "m4.large"
       - "m4.xlarge"
+
+  PMVpcCIDR:
+    Description: "VPC CIDR."
+    Type: "String"
+
+  PMPublicSubnet1CIDR:
+    Description: "VPC Public Subnet 1."
+    Type: "String"
+
+  PMPublicSubnet2CIDR:
+    Description: "VPC Public Subnet 2."
+    Type: "String"
+
+  PMPrivateSubnet1CIDR:
+    Description: "VPC Private Subnet 1."
+    Type: "String"
+
+  PMPrivateSubnet2CIDR:
+    Description: "VPC Private Subnet 2."
+    Type: "String"
 
   PMSpotPrice:
     Description: "Maximum spot price to bid in USD (e.g.: 0.32)."
@@ -160,11 +189,16 @@ Resources:
       TimeoutInMinutes: '5'
       Parameters:
         PMServerEnv: !Ref "AWS::StackName"
-        PMVpcCIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMVpcCIDR"]
-        PMPublicSubnet1CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPublicSubnet1CIDR"]
-        PMPublicSubnet2CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPublicSubnet2CIDR"]
-        PMPrivateSubnet1CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPrivateSubnet1CIDR"]
-        PMPrivateSubnet2CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPrivateSubnet2CIDR"]
+        PMVpcCIDR: !Ref "PMVpcCIDR"
+        PMPublicSubnet1CIDR: !Ref "PMPublicSubnet1CIDR"
+        PMPublicSubnet2CIDR: !Ref "PMPublicSubnet2CIDR"
+        PMPrivateSubnet1CIDR: !Ref "PMPrivateSubnet1CIDR"
+        PMPrivateSubnet2CIDR: !Ref "PMPrivateSubnet2CIDR"
+        # PMVpcCIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMVpcCIDR"]
+        # PMPublicSubnet1CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPublicSubnet1CIDR"]
+        # PMPublicSubnet2CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPublicSubnet2CIDR"]
+        # PMPrivateSubnet1CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPrivateSubnet1CIDR"]
+        # PMPrivateSubnet2CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPrivateSubnet2CIDR"]
         PMFlowLogRole: !GetAtt "MyIAMRole.Outputs.VPCFlowLogRoleArn"
 
   MySecurityGroup:
@@ -199,12 +233,13 @@ Resources:
         DatabaseInstanceClass: "db.t2.micro"
         PMRDSSG: !GetAtt "MySecurityGroup.Outputs.MyRDSSG"
         PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
-        PMDomainRds: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainRds"]
+        # PMDomainRds: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainRds"]
+        PMDomainRds: !Sub "${AWS::StackName}-{DomainRdsPrefix}"
         PMHostedZone: !Ref "PMHostedZone"
 
   MyJiraELB:
     Type: "AWS::CloudFormation::Stack"
-    #Condition: "UseProdEnv"
+    Condition: "UseProdEnv"
     DependsOn:
     - "MyRDS"
     Properties:
@@ -220,7 +255,7 @@ Resources:
 
   MyJiraAutoScaling:
     Type: "AWS::CloudFormation::Stack"
-    # Condition: "UseProdEnv"
+    Condition: "UseProdEnv"
     DependsOn:
     - "MyJiraELB"
     Properties:
@@ -247,7 +282,7 @@ Resources:
 
   MyDNS:
     Type: "AWS::CloudFormation::Stack"
-    # Condition: "UseProdEnv"
+    Condition: "UseProdEnv"
     DependsOn:
     - "MyJiraAutoScaling"
     Properties:
