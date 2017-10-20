@@ -77,8 +77,8 @@ Resources:
   JiraLaunchConfiguration:
     Type: "AWS::AutoScaling::LaunchConfiguration"
     Properties:
-      SpotPrice:
-        Ref: "PMSpotPrice"
+      # SpotPrice:
+      #   Ref: "PMSpotPrice"
       AssociatePublicIpAddress: "true"
       KeyName:
         Ref: "PMKeyName"
