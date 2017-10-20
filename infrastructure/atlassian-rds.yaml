@@ -159,15 +159,10 @@ Outputs:
 
   RdsDbEndpoint:
     Description: "RDS Database Endpoint"
-    Value: !GetAtt "Database.Endpoint.Address"
+    Value: !Sub "${PMDomainRds}"
 
   DbUser:
     Description: "RDS Database admin account user"
     Value: !Ref "DatabaseUser"
-
-  DbPassword:
-    Description: "RDS Database admin account password"
-    Value: !Ref "DatabasePassword"
-
 
 
