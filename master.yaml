@@ -105,44 +105,6 @@ Conditions:
 #
 # For any additional region & Env, you can add by yourself below.
 Mappings:
-  # EnvMap:
-
-    # dev:
-    #   # AutoscaleMin: '1'
-    #   # AutoscaleMax: '1'
-    #   # AutoscaleDes: '1'
-    #   DomainJira: "dev-jira.crytera.com"
-    #   DomainRds: "dev-rds.crytera.com"
-    #   PMVpcCIDR: "10.0.0.0/16"
-    #   PMPublicSubnet1CIDR: "10.0.1.0/24"
-    #   PMPublicSubnet2CIDR: "10.0.2.0/24"
-    #   PMPrivateSubnet1CIDR: "10.0.3.0/24"
-    #   PMPrivateSubnet2CIDR: "10.0.4.0/24"
-
-    # staging:
-    #   # AutoscaleMin: '1'
-    #   # AutoscaleMax: '1'
-    #   # AutoscaleDes: '1'
-    #   DomainJira: "staging-jira.crytera.com"
-    #   DomainRds: "staging-rds.crytera.com"
-    #   PMVpcCIDR: "10.1.0.0/16"
-    #   PMPublicSubnet1CIDR: "10.1.1.0/24"
-    #   PMPublicSubnet2CIDR: "10.1.2.0/24"
-    #   PMPrivateSubnet1CIDR: "10.1.3.0/24"
-    #   PMPrivateSubnet2CIDR: "10.1.4.0/24"
-
-    # prod:
-    #   # AutoscaleMin: '1'
-    #   # AutoscaleMax: '1'
-    #   # AutoscaleDes: '1'
-    #   DomainJira: "prod-jira.crytera.com"
-    #   DomainRds: "prod-rds.crytera.com"
-    #   PMVpcCIDR: "10.2.0.0/16"
-    #   PMPublicSubnet1CIDR: "10.2.1.0/24"
-    #   PMPublicSubnet2CIDR: "10.2.2.0/24"
-    #   PMPrivateSubnet1CIDR: "10.2.3.0/24"
-    #   PMPrivateSubnet2CIDR: "10.2.4.0/24"
-
   RegionMap:
     # Default North Virginia
     us-east-1:
