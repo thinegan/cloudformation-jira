@@ -236,7 +236,7 @@ Resources:
 
   MyJiraELB:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    # Condition: "UseProdEnv"
     DependsOn:
     - "MyRDS"
     Properties:
@@ -252,7 +252,7 @@ Resources:
 
   MyJiraAutoScaling:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    # Condition: "UseProdEnv"
     DependsOn:
     - "MyJiraELB"
     Properties:
@@ -279,7 +279,7 @@ Resources:
 
   MyDNS:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    # Condition: "UseProdEnv"
     DependsOn:
     - "MyJiraAutoScaling"
     Properties:
