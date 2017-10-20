@@ -234,7 +234,7 @@ Resources:
         PMRDSSG: !GetAtt "MySecurityGroup.Outputs.MyRDSSG"
         PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
         # PMDomainRds: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainRds"]
-        PMDomainRds: !Sub "${AWS::StackName}-{DomainRdsPrefix}"
+        PMDomainRds: !Sub "${AWS::StackName}-${DomainRdsPrefix}"
         PMHostedZone: !Ref "PMHostedZone"
 
   MyJiraELB:
