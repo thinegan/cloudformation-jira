@@ -105,43 +105,43 @@ Conditions:
 #
 # For any additional region & Env, you can add by yourself below.
 Mappings:
-  EnvMap:
+  # EnvMap:
 
-    dev:
-      # AutoscaleMin: '1'
-      # AutoscaleMax: '1'
-      # AutoscaleDes: '1'
-      DomainJira: "dev-jira.crytera.com"
-      DomainRds: "dev-rds.crytera.com"
-      PMVpcCIDR: "10.0.0.0/16"
-      PMPublicSubnet1CIDR: "10.0.1.0/24"
-      PMPublicSubnet2CIDR: "10.0.2.0/24"
-      PMPrivateSubnet1CIDR: "10.0.3.0/24"
-      PMPrivateSubnet2CIDR: "10.0.4.0/24"
+    # dev:
+    #   # AutoscaleMin: '1'
+    #   # AutoscaleMax: '1'
+    #   # AutoscaleDes: '1'
+    #   DomainJira: "dev-jira.crytera.com"
+    #   DomainRds: "dev-rds.crytera.com"
+    #   PMVpcCIDR: "10.0.0.0/16"
+    #   PMPublicSubnet1CIDR: "10.0.1.0/24"
+    #   PMPublicSubnet2CIDR: "10.0.2.0/24"
+    #   PMPrivateSubnet1CIDR: "10.0.3.0/24"
+    #   PMPrivateSubnet2CIDR: "10.0.4.0/24"
 
-    staging:
-      # AutoscaleMin: '1'
-      # AutoscaleMax: '1'
-      # AutoscaleDes: '1'
-      DomainJira: "staging-jira.crytera.com"
-      DomainRds: "staging-rds.crytera.com"
-      PMVpcCIDR: "10.1.0.0/16"
-      PMPublicSubnet1CIDR: "10.1.1.0/24"
-      PMPublicSubnet2CIDR: "10.1.2.0/24"
-      PMPrivateSubnet1CIDR: "10.1.3.0/24"
-      PMPrivateSubnet2CIDR: "10.1.4.0/24"
+    # staging:
+    #   # AutoscaleMin: '1'
+    #   # AutoscaleMax: '1'
+    #   # AutoscaleDes: '1'
+    #   DomainJira: "staging-jira.crytera.com"
+    #   DomainRds: "staging-rds.crytera.com"
+    #   PMVpcCIDR: "10.1.0.0/16"
+    #   PMPublicSubnet1CIDR: "10.1.1.0/24"
+    #   PMPublicSubnet2CIDR: "10.1.2.0/24"
+    #   PMPrivateSubnet1CIDR: "10.1.3.0/24"
+    #   PMPrivateSubnet2CIDR: "10.1.4.0/24"
 
-    prod:
-      # AutoscaleMin: '1'
-      # AutoscaleMax: '1'
-      # AutoscaleDes: '1'
-      DomainJira: "prod-jira.crytera.com"
-      DomainRds: "prod-rds.crytera.com"
-      PMVpcCIDR: "10.2.0.0/16"
-      PMPublicSubnet1CIDR: "10.2.1.0/24"
-      PMPublicSubnet2CIDR: "10.2.2.0/24"
-      PMPrivateSubnet1CIDR: "10.2.3.0/24"
-      PMPrivateSubnet2CIDR: "10.2.4.0/24"
+    # prod:
+    #   # AutoscaleMin: '1'
+    #   # AutoscaleMax: '1'
+    #   # AutoscaleDes: '1'
+    #   DomainJira: "prod-jira.crytera.com"
+    #   DomainRds: "prod-rds.crytera.com"
+    #   PMVpcCIDR: "10.2.0.0/16"
+    #   PMPublicSubnet1CIDR: "10.2.1.0/24"
+    #   PMPublicSubnet2CIDR: "10.2.2.0/24"
+    #   PMPrivateSubnet1CIDR: "10.2.3.0/24"
+    #   PMPrivateSubnet2CIDR: "10.2.4.0/24"
 
   RegionMap:
     # Default North Virginia
@@ -191,11 +191,6 @@ Resources:
         PMPublicSubnet2CIDR: !Ref "PMPublicSubnet2CIDR"
         PMPrivateSubnet1CIDR: !Ref "PMPrivateSubnet1CIDR"
         PMPrivateSubnet2CIDR: !Ref "PMPrivateSubnet2CIDR"
-        # PMVpcCIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMVpcCIDR"]
-        # PMPublicSubnet1CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPublicSubnet1CIDR"]
-        # PMPublicSubnet2CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPublicSubnet2CIDR"]
-        # PMPrivateSubnet1CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPrivateSubnet1CIDR"]
-        # PMPrivateSubnet2CIDR: !FindInMap ["EnvMap", !Ref "AWS::StackName", "PMPrivateSubnet2CIDR"]
         PMFlowLogRole: !GetAtt "MyIAMRole.Outputs.VPCFlowLogRoleArn"
 
   MySecurityGroup:
@@ -230,7 +225,6 @@ Resources:
         DatabaseInstanceClass: "db.t2.micro"
         PMRDSSG: !GetAtt "MySecurityGroup.Outputs.MyRDSSG"
         PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
-        # PMDomainRds: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainRds"]
         PMDomainRds: !Sub "${AWS::StackName}-${DomainRdsPrefix}"
         PMHostedZone: !Ref "PMHostedZone"
 
@@ -269,14 +263,10 @@ Resources:
         PMS3Backup: !GetAtt "MyS3Bucket.Outputs.S3Backup"
         PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
         PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
-        # PMDomainJira: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainJira"]
         PMDomainJira: !Sub "${AWS::StackName}-${DomainJiraPrefix}"
         PMAutoscaleMin: '1'
         PMAutoscaleMax: '1'
         PMAutoscaleDes: '1'
-        # PMAutoscaleMin: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMin"]
-        # PMAutoscaleMax: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleMax"]
-        # PMAutoscaleDes: !FindInMap ["EnvMap", !Ref "AWS::StackName", "AutoscaleDes"]
 
   MyDNS:
     Type: "AWS::CloudFormation::Stack"
@@ -289,7 +279,6 @@ Resources:
       Parameters:
         PMJiraLBDNSName: !GetAtt "MyJiraELB.Outputs.JiraLBDNSName"
         PMJiraLBHostedZoneId: !GetAtt "MyJiraELB.Outputs.JiraLBHostedZoneId"
-        # PMDomainJira: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainJira"]
         PMDomainJira: !Sub "${AWS::StackName}-${DomainJiraPrefix}"
         PMHostedZone: !Ref "PMHostedZone"
 
@@ -302,7 +291,6 @@ Outputs:
         - ''
         - - "https://"
           - !Sub "${AWS::StackName}-${DomainJiraPrefix}"
-          # - !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainJira"]
           - "/"
 
   RDSserver:
@@ -311,7 +299,6 @@ Outputs:
       Fn::Join:
         - ''
         - - !Sub "${AWS::StackName}-${DomainRdsPrefix}"
-        # - - !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainRds"]
           - ":3306"
 
   # Own Certs
