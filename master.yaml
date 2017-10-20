@@ -81,10 +81,10 @@ Parameters:
     Description: "VPC Private Subnet 2."
     Type: "String"
 
-  PMSpotPrice:
-    Description: "Maximum spot price to bid in USD (e.g.: 0.32)."
-    Default: '0.03'
-    Type: "Number"
+  # PMSpotPrice:
+  #   Description: "Maximum spot price to bid in USD (e.g.: 0.32)."
+  #   Default: '0.03'
+  #   Type: "Number"
 
   # Term: OnDemand
   # Instance Type: t2.medium (2-CPU, 4GB-MEM)
@@ -208,7 +208,7 @@ Resources:
 
   MyJiraAutoScaling:
     Type: "AWS::CloudFormation::Stack"
-    # Condition: "UseProdEnv"
+    Condition: "UseProdEnv"
     DependsOn:
     - "MyJiraELB"
     Properties:
@@ -218,7 +218,7 @@ Resources:
         PMServerEnv: !Ref "AWS::StackName"
         PMKeyName: !Ref "PMKeyName"
         PMJiraInstanceType: !Ref "PMJiraInstanceType"
-        PMSpotPrice: !Ref "PMSpotPrice"
+        # PMSpotPrice: !Ref "PMSpotPrice"
         PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
         PMMyJiraSG: !GetAtt "MySecurityGroup.Outputs.MyJiraSG"
         PMJiraLoadBalancer: !GetAtt "MyJiraELB.Outputs.JiraLoadBalancer"
@@ -232,7 +232,7 @@ Resources:
 
   MyDNS:
     Type: "AWS::CloudFormation::Stack"
-    # Condition: "UseProdEnv"
+    Condition: "UseProdEnv"
     DependsOn:
     - "MyJiraAutoScaling"
     Properties:

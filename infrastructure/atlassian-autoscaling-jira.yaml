@@ -30,9 +30,9 @@ Parameters:
     Description: "Enter an instance type. Default is t2.micro."
     Type: "String"
 
-  PMSpotPrice:
-    Description: "Maximum spot price to bid in USD (e.g.: 0.32)."
-    Type: "Number"
+  # PMSpotPrice:
+  #   Description: "Maximum spot price to bid in USD (e.g.: 0.32)."
+  #   Type: "Number"
 
   PMPublicSubnets:
     Description: "Subnets to launch instances into"
