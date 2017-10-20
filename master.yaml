@@ -35,17 +35,14 @@ Parameters:
     Type: "String"
 
   PMHostedZone:
-    Default: "crytera.com"
     Description: "Enter an existing Hosted Zone."
     Type: "String"
 
   DomainJiraPrefix:
-    Default: "jira.crytera.com"
     Description: "Enter an sub domain prefix."
     Type: "String"
 
   DomainRdsPrefix:
-    Default: "rds.crytera.com"
     Description: "Enter an sub domain prefix."
     Type: "String"
 
@@ -291,7 +288,8 @@ Resources:
       Parameters:
         PMJiraLBDNSName: !GetAtt "MyJiraELB.Outputs.JiraLBDNSName"
         PMJiraLBHostedZoneId: !GetAtt "MyJiraELB.Outputs.JiraLBHostedZoneId"
-        PMDomainJira: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainJira"]
+        # PMDomainJira: !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainJira"]
+        PMDomainJira: !Sub "${AWS::StackName}-${DomainJiraPrefix}"
         PMHostedZone: !Ref "PMHostedZone"
 
 Outputs:
@@ -302,7 +300,8 @@ Outputs:
       Fn::Join:
         - ''
         - - "https://"
-          - !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainJira"]
+          - !Sub "${AWS::StackName}-${DomainJiraPrefix}"
+          # - !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainJira"]
           - "/"
 
   RDSserver:
@@ -310,7 +309,8 @@ Outputs:
     Value:
       Fn::Join:
         - ''
-        - - !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainRds"]
+        - - !Sub "${AWS::StackName}-${DomainRdsPrefix}"
+        # - - !FindInMap ["EnvMap", !Ref "AWS::StackName", "DomainRds"]
           - ":3306"
 
   # Own Certs
