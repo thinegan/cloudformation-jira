@@ -295,7 +295,7 @@ Resources:
       Protocol: "6"
       RuleAction: "allow"
       Egress: "false"
-      CidrBlock: !Ref "PMOWNIP"
+      CidrBlock: "0.0.0.0/0"
       PortRange:
         From: '22'
         To: '22'
@@ -365,7 +365,7 @@ Resources:
       Protocol: "6"
       RuleAction: "allow"
       Egress: "true"
-      CidrBlock: !Ref "PMOWNIP"
+      CidrBlock: "0.0.0.0/0"
       PortRange:
         From: '22'
         To: '22'
