@@ -156,7 +156,7 @@ Resources:
 
   MyRDS:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    # Condition: "UseProdEnv"
     DependsOn:
     - "MySecurityGroup"
     Properties:
