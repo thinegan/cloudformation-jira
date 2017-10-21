@@ -140,7 +140,7 @@ Resources:
 
   MySecurityGroup:
     Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
+    # Condition: "UseProdEnv"
     DependsOn:
     - "MyVPC"
     Properties:
@@ -149,8 +149,10 @@ Resources:
       Parameters:
         PMServerEnv: !Ref "AWS::StackName"
         PMOWNIP: !Ref "PMOWNIP"
+        PMVpcCIDR: !Ref "PMVpcCIDR"
         PMVPC: !GetAtt "MyVPC.Outputs.VPC"
-        PMNACL: !GetAtt "MyVPC.Outputs.MyNetworkACL"
+        PMPublicNACL: !GetAtt "MyVPC.Outputs.MyPublicNetworkACL"
+        PMPrivateNACL: !GetAtt "MyVPC.Outputs.MyPrivateNetworkACL"
 
   MyRDS:
     Type: "AWS::CloudFormation::Stack"
