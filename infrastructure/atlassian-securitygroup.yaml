@@ -118,6 +118,28 @@ Resources:
         - Key: "Name"
           Value: !Sub "${PMServerEnv}-JiraELBSG"
 
+  # Allow SSH connection to Bastion Host
+  MyBastionHostSG:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties: 
+      VpcId: !Ref "PMVPC"
+      GroupDescription: "Bastion Host Security Group"
+      SecurityGroupIngress:
+        - IpProtocol: 'icmp'
+          FromPort: '-1'
+          ToPort: '-1'
+          CidrIp: '0.0.0.0/0'
+        - CidrIp: !Ref "PMOWNIP"
+          FromPort: "22"
+          IpProtocol: "tcp"
+          ToPort: "22"
+      SecurityGroupEgress:
+        - IpProtocol: '-1'
+          CidrIp: '0.0.0.0/0'
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${PMServerEnv}-MyBastionHostSG"
+
   #####################################################################################
   # Private Network ACL Firewall Protection (inbound and outbound traffic at the subnet level)
   #####################################################################################
