@@ -151,7 +151,7 @@ Resources:
         To: '3306'
 
   ####### INBOUND Ephemeral Ports Network ACL RULES #######
-  InboundEPHNACL:
+  InboundEPHNACLP:
     Type: "AWS::EC2::NetworkAclEntry"
     Properties:
       NetworkAclId: !Ref "PMPrivateNACL"
@@ -165,7 +165,7 @@ Resources:
         To: '65535'
 
   ####### INBOUND ICMP Network ACL RULES #######
-  InboundICMPNACL:
+  InboundICMPNACLP:
     Type: "AWS::EC2::NetworkAclEntry"
     Properties:
       NetworkAclId: !Ref "PMPrivateNACL"
@@ -207,7 +207,7 @@ Resources:
         To: '3306'
 
   ####### OUTBOUND Ephemeral Ports Network ACL RULES #######
-  OutboundEPHNACL:
+  OutboundEPHNACLP:
     Type: "AWS::EC2::NetworkAclEntry"
     Properties:
       NetworkAclId: !Ref "PMPrivateNACL"
@@ -221,7 +221,7 @@ Resources:
         To: '65535'
 
   ####### OUTBOUND ICMP Network ACL RULES #######
-  OutboundICMPNACL:
+  OutboundICMPNACLP:
     Type: "AWS::EC2::NetworkAclEntry"
     Properties:
       NetworkAclId: !Ref "PMPrivateNACL"
