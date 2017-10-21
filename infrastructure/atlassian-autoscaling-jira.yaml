@@ -79,7 +79,8 @@ Resources:
     Properties:
       # SpotPrice:
       #   Ref: "PMSpotPrice"
-      AssociatePublicIpAddress: "true"
+      # AssociatePublicIpAddress: "true"
+      AssociatePublicIpAddress: "false"
       KeyName:
         Ref: "PMKeyName"
       ImageId:
