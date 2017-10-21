@@ -87,7 +87,7 @@ Parameters:
 
 ####### Condition Setup #######
 Conditions: 
-  UseProdEnv: !Equals [ !Ref "PMServerEnv", "dev" ]
+  UseProdEnv: !Equals [ !Ref "PMServerEnv", "prod" ]
 
 Resources:
 
