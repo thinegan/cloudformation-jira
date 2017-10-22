@@ -49,7 +49,6 @@ Resources:
       HealthCheck:
         HealthyThreshold: '6'
         Interval: '60'
-        # Target: "TCP:22"
         Target: "TCP:8000"
         Timeout: '5'
         UnhealthyThreshold: '8'

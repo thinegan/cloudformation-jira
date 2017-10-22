@@ -203,13 +203,11 @@ Resources:
         PMServerEnv: !Ref "AWS::StackName"
         PMKeyName: !Ref "PMKeyName"
         PMJiraInstanceType: !Ref "PMJiraInstanceType"
-        # PMSpotPrice: !Ref "PMSpotPrice"
         PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
         PMMyJiraSG: !GetAtt "MySecurityGroup.Outputs.MyJiraSG"
         PMJiraLoadBalancer: !GetAtt "MyJiraELB.Outputs.JiraLoadBalancer"
         PMS3Backup: !GetAtt "MyS3Bucket.Outputs.S3Backup"
         PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
-        # PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
         PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
         PMDomainJira: !Sub "${AWS::StackName}-${DomainJiraPrefix}"
         PMAutoscaleMin: '1'
