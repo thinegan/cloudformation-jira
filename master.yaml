@@ -114,149 +114,149 @@ Resources:
       Parameters:
         PMServerEnv: !Ref "AWS::StackName"
 
-  MyS3Bucket:
-    Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
-    Properties:
-      TemplateURL: !Sub "${PMTemplateURL}/atlassian-s3bucket.yaml"
-      TimeoutInMinutes: '5'
-      Parameters:
-        PMServerEnv: !Ref "AWS::StackName"
-        PMRegionAStorage: !FindInMap ["RegionMap", !Ref "AWS::Region", "AStorage"]
+#   MyS3Bucket:
+#     Type: "AWS::CloudFormation::Stack"
+#     Condition: "UseProdEnv"
+#     Properties:
+#       TemplateURL: !Sub "${PMTemplateURL}/atlassian-s3bucket.yaml"
+#       TimeoutInMinutes: '5'
+#       Parameters:
+#         PMServerEnv: !Ref "AWS::StackName"
+#         PMRegionAStorage: !FindInMap ["RegionMap", !Ref "AWS::Region", "AStorage"]
 
-  MyVPC:
-    Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
-    DependsOn:
-    - "MyS3Bucket"
-    Properties:
-      TemplateURL: !Sub "${PMTemplateURL}/atlassian-vpc.yaml"
-      TimeoutInMinutes: '5'
-      Parameters:
-        PMServerEnv: !Ref "AWS::StackName"
-        PMVpcCIDR: !Ref "PMVpcCIDR"
-        PMPublicSubnet1CIDR: !Ref "PMPublicSubnet1CIDR"
-        PMPublicSubnet2CIDR: !Ref "PMPublicSubnet2CIDR"
-        PMPrivateSubnet1CIDR: !Ref "PMPrivateSubnet1CIDR"
-        PMPrivateSubnet2CIDR: !Ref "PMPrivateSubnet2CIDR"
-        PMFlowLogRole: !GetAtt "MyIAMRole.Outputs.VPCFlowLogRoleArn"
+#   MyVPC:
+#     Type: "AWS::CloudFormation::Stack"
+#     Condition: "UseProdEnv"
+#     DependsOn:
+#     - "MyS3Bucket"
+#     Properties:
+#       TemplateURL: !Sub "${PMTemplateURL}/atlassian-vpc.yaml"
+#       TimeoutInMinutes: '5'
+#       Parameters:
+#         PMServerEnv: !Ref "AWS::StackName"
+#         PMVpcCIDR: !Ref "PMVpcCIDR"
+#         PMPublicSubnet1CIDR: !Ref "PMPublicSubnet1CIDR"
+#         PMPublicSubnet2CIDR: !Ref "PMPublicSubnet2CIDR"
+#         PMPrivateSubnet1CIDR: !Ref "PMPrivateSubnet1CIDR"
+#         PMPrivateSubnet2CIDR: !Ref "PMPrivateSubnet2CIDR"
+#         PMFlowLogRole: !GetAtt "MyIAMRole.Outputs.VPCFlowLogRoleArn"
 
-  MySecurityGroup:
-    Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
-    DependsOn:
-    - "MyVPC"
-    Properties:
-      TemplateURL: !Sub "${PMTemplateURL}/atlassian-securitygroup.yaml"
-      TimeoutInMinutes: '5'
-      Parameters:
-        PMServerEnv: !Ref "AWS::StackName"
-        PMOWNIP: !Ref "PMOWNIP"
-        PMVpcCIDR: !Ref "PMVpcCIDR"
-        PMVPC: !GetAtt "MyVPC.Outputs.VPC"
-        PMPublicNACL: !GetAtt "MyVPC.Outputs.MyPublicNetworkACL"
-        PMPrivateNACL: !GetAtt "MyVPC.Outputs.MyPrivateNetworkACL"
+#   MySecurityGroup:
+#     Type: "AWS::CloudFormation::Stack"
+#     Condition: "UseProdEnv"
+#     DependsOn:
+#     - "MyVPC"
+#     Properties:
+#       TemplateURL: !Sub "${PMTemplateURL}/atlassian-securitygroup.yaml"
+#       TimeoutInMinutes: '5'
+#       Parameters:
+#         PMServerEnv: !Ref "AWS::StackName"
+#         PMOWNIP: !Ref "PMOWNIP"
+#         PMVpcCIDR: !Ref "PMVpcCIDR"
+#         PMVPC: !GetAtt "MyVPC.Outputs.VPC"
+#         PMPublicNACL: !GetAtt "MyVPC.Outputs.MyPublicNetworkACL"
+#         PMPrivateNACL: !GetAtt "MyVPC.Outputs.MyPrivateNetworkACL"
 
-  MyRDS:
-    Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
-    DependsOn:
-    - "MySecurityGroup"
-    Properties:
-      TemplateURL: !Sub "${PMTemplateURL}/atlassian-rds.yaml"
-      TimeoutInMinutes: '5'
-      Parameters:
-        PMServerEnv: !Ref "AWS::StackName"
-        DatabaseUser: !Ref "PMDatabaseUsername"
-        DatabasePassword: !Ref "PMDatabasePassword"
-        DatabaseName: !Sub "${AWS::StackName}jiradb"
-        DatabaseSize: '5'
-        DatabaseEngine: "mysql"
-        DatabaseInstanceClass: "db.t2.micro"
-        PMRDSSG: !GetAtt "MySecurityGroup.Outputs.MyRDSSG"
-        PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
-        PMDomainRds: !Sub "${DomainRdsPrefix}"
-        PMHostedZone: !Ref "PMHostedZone"
+#   MyRDS:
+#     Type: "AWS::CloudFormation::Stack"
+#     Condition: "UseProdEnv"
+#     DependsOn:
+#     - "MySecurityGroup"
+#     Properties:
+#       TemplateURL: !Sub "${PMTemplateURL}/atlassian-rds.yaml"
+#       TimeoutInMinutes: '5'
+#       Parameters:
+#         PMServerEnv: !Ref "AWS::StackName"
+#         DatabaseUser: !Ref "PMDatabaseUsername"
+#         DatabasePassword: !Ref "PMDatabasePassword"
+#         DatabaseName: !Sub "${AWS::StackName}jiradb"
+#         DatabaseSize: '5'
+#         DatabaseEngine: "mysql"
+#         DatabaseInstanceClass: "db.t2.micro"
+#         PMRDSSG: !GetAtt "MySecurityGroup.Outputs.MyRDSSG"
+#         PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
+#         PMDomainRds: !Sub "${DomainRdsPrefix}"
+#         PMHostedZone: !Ref "PMHostedZone"
 
-  MyJiraELB:
-    Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
-    DependsOn:
-    - "MyRDS"
-    Properties:
-      TemplateURL: !Sub "${PMTemplateURL}/atlassian-elb.yaml"
-      TimeoutInMinutes: '5'
-      Parameters:
-        PMServerEnv: !Ref "AWS::StackName"
-        PMDomain1CertARN: !FindInMap ["RegionMap", !Ref "AWS::Region", "CertARN"]
-        PMJiraELBSG: !GetAtt "MySecurityGroup.Outputs.JiraELBSG"
-        PMS3Logging: !GetAtt "MyS3Bucket.Outputs.S3Logging"
-        PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
+#   MyJiraELB:
+#     Type: "AWS::CloudFormation::Stack"
+#     Condition: "UseProdEnv"
+#     DependsOn:
+#     - "MyRDS"
+#     Properties:
+#       TemplateURL: !Sub "${PMTemplateURL}/atlassian-elb.yaml"
+#       TimeoutInMinutes: '5'
+#       Parameters:
+#         PMServerEnv: !Ref "AWS::StackName"
+#         PMDomain1CertARN: !FindInMap ["RegionMap", !Ref "AWS::Region", "CertARN"]
+#         PMJiraELBSG: !GetAtt "MySecurityGroup.Outputs.JiraELBSG"
+#         PMS3Logging: !GetAtt "MyS3Bucket.Outputs.S3Logging"
+#         PMPublicSubnets: !GetAtt "MyVPC.Outputs.PublicSubnets"
 
 
-  MyJiraAutoScaling:
-    Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
-    DependsOn:
-    - "MyJiraELB"
-    Properties:
-      TemplateURL: !Sub "${PMTemplateURL}/atlassian-autoscaling-jira.yaml"
-      TimeoutInMinutes: '5'
-      Parameters:
-        PMServerEnv: !Ref "AWS::StackName"
-        PMKeyName: !Ref "PMKeyName"
-        PMJiraInstanceType: !Ref "PMJiraInstanceType"
-        PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
-        PMMyJiraSG: !GetAtt "MySecurityGroup.Outputs.MyJiraSG"
-        PMJiraLoadBalancer: !GetAtt "MyJiraELB.Outputs.JiraLoadBalancer"
-        PMS3Backup: !GetAtt "MyS3Bucket.Outputs.S3Backup"
-        PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
-        PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
-        PMDomainJira: !Sub "${DomainJiraPrefix}"
-        PMAutoscaleMin: '1'
-        PMAutoscaleMax: '1'
-        PMAutoscaleDes: '1'
+#   MyJiraAutoScaling:
+#     Type: "AWS::CloudFormation::Stack"
+#     Condition: "UseProdEnv"
+#     DependsOn:
+#     - "MyJiraELB"
+#     Properties:
+#       TemplateURL: !Sub "${PMTemplateURL}/atlassian-autoscaling-jira.yaml"
+#       TimeoutInMinutes: '5'
+#       Parameters:
+#         PMServerEnv: !Ref "AWS::StackName"
+#         PMKeyName: !Ref "PMKeyName"
+#         PMJiraInstanceType: !Ref "PMJiraInstanceType"
+#         PMRegionAMI: !FindInMap ["RegionMap", !Ref "AWS::Region", "AMI"]
+#         PMMyJiraSG: !GetAtt "MySecurityGroup.Outputs.MyJiraSG"
+#         PMJiraLoadBalancer: !GetAtt "MyJiraELB.Outputs.JiraLoadBalancer"
+#         PMS3Backup: !GetAtt "MyS3Bucket.Outputs.S3Backup"
+#         PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
+#         PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
+#         PMDomainJira: !Sub "${DomainJiraPrefix}"
+#         PMAutoscaleMin: '1'
+#         PMAutoscaleMax: '1'
+#         PMAutoscaleDes: '1'
 
-  MyDNS:
-    Type: "AWS::CloudFormation::Stack"
-    Condition: "UseProdEnv"
-    DependsOn:
-    - "MyJiraAutoScaling"
-    Properties:
-      TemplateURL: !Sub "${PMTemplateURL}/atlassian-route53.yaml"
-      TimeoutInMinutes: '5'
-      Parameters:
-        PMJiraLBDNSName: !GetAtt "MyJiraELB.Outputs.JiraLBDNSName"
-        PMJiraLBHostedZoneId: !GetAtt "MyJiraELB.Outputs.JiraLBHostedZoneId"
-        PMDomainJira: !Sub "${DomainJiraPrefix}"
-        PMHostedZone: !Ref "PMHostedZone"
+#   MyDNS:
+#     Type: "AWS::CloudFormation::Stack"
+#     Condition: "UseProdEnv"
+#     DependsOn:
+#     - "MyJiraAutoScaling"
+#     Properties:
+#       TemplateURL: !Sub "${PMTemplateURL}/atlassian-route53.yaml"
+#       TimeoutInMinutes: '5'
+#       Parameters:
+#         PMJiraLBDNSName: !GetAtt "MyJiraELB.Outputs.JiraLBDNSName"
+#         PMJiraLBHostedZoneId: !GetAtt "MyJiraELB.Outputs.JiraLBHostedZoneId"
+#         PMDomainJira: !Sub "${DomainJiraPrefix}"
+#         PMHostedZone: !Ref "PMHostedZone"
 
-Outputs:
+# Outputs:
 
-  Jiraserver:
-    Description: "Jira Server Site"
-    Value:
-      Fn::Join:
-        - ''
-        - - "https://"
-          - !Sub "${DomainJiraPrefix}"
-          - "/"
+#   Jiraserver:
+#     Description: "Jira Server Site"
+#     Value:
+#       Fn::Join:
+#         - ''
+#         - - "https://"
+#           - !Sub "${DomainJiraPrefix}"
+#           - "/"
 
-  RDSserver:
-    Description: "RDS EndPoint Domain"
-    Value:
-      Fn::Join:
-        - ''
-        - - !Sub "${DomainRdsPrefix}"
-          - ":3306"
+#   RDSserver:
+#     Description: "RDS EndPoint Domain"
+#     Value:
+#       Fn::Join:
+#         - ''
+#         - - !Sub "${DomainRdsPrefix}"
+#           - ":3306"
 
-  # Own Certs
-  # https://cloudonaut.io/pitfall-acm-certificate-cloudfront-cloudformation/
-  # Error : The specified SSL certificate doesn't exist, isn't valid, or doesn't include a valid certificate chain.
-  # But the ACM certificate needs to be created in us-east-1 when used together with CloudFront. 
-  # So one possible solution was to create the CloudFormation stack in us-east-1. Lesson learned! :)
-  PMDomain1CertARN:
-    Description: "A reference to SSL Certificate ARN of the region"
-    Value: !FindInMap ["RegionMap", "us-east-1", "CertARN"]
-    Export:
-      Name: !Sub "${AWS::StackName}CDN-PMDomain1CertARN"
+#   # Own Certs
+#   # https://cloudonaut.io/pitfall-acm-certificate-cloudfront-cloudformation/
+#   # Error : The specified SSL certificate doesn't exist, isn't valid, or doesn't include a valid certificate chain.
+#   # But the ACM certificate needs to be created in us-east-1 when used together with CloudFront. 
+#   # So one possible solution was to create the CloudFormation stack in us-east-1. Lesson learned! :)
+#   PMDomain1CertARN:
+#     Description: "A reference to SSL Certificate ARN of the region"
+#     Value: !FindInMap ["RegionMap", "us-east-1", "CertARN"]
+#     Export:
+#       Name: !Sub "${AWS::StackName}CDN-PMDomain1CertARN"
