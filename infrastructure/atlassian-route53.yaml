@@ -1,0 +1,47 @@
+# Note, You need at least 1 domain and this is not free tier.
+# Pricing : https://aws.amazon.com/route53/pricing/
+#
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+    This template deploys route53 Setup,
+    Alias Web Elastic Load Balancer to <domain>
+Parameters: 
+
+  PMDomainJira:
+    Description: "A reference to the Jira FQDN domain name"
+    Type: "String"
+
+  PMHostedZone:
+    Description: "A reference to the Hosted Zone"
+    Type: "String"
+
+  PMJiraLBDNSName:
+    Description: "A reference to the Jira ELB DNS Name"
+    Type: "String"
+
+  PMJiraLBHostedZoneId:
+    Description: "A reference to the Jira ELB Hosted Zone ID"
+    Type: "String"
+
+
+Resources:
+
+  Route53:
+    Type: "AWS::Route53::RecordSetGroup"
+    Properties:
+      HostedZoneName: !Sub "${PMHostedZone}."
+      Comment: "Zone apex alias targeted to myELB LoadBalancer."
+      RecordSets:
+      - Name: !Sub "${PMDomainJira}."
+        Type: 'A'
+        AliasTarget:
+          HostedZoneId: !Ref "PMJiraLBHostedZoneId"
+          DNSName: !Ref "PMJiraLBDNSName"
+
+Outputs:
+
+  Route53:
+    Description: "A reference to the Route53"
+    Value: !Ref "Route53"
+

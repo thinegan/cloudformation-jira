@@ -1,0 +1,253 @@
+# Note, the development environment will only spin a min of 2 instance (HA Support)
+# The production environment will spin a min of 2 instance (HA support)
+# You can adjust the ASMIN, ASMAX, ASDES at the master.yaml file
+# to meet your instances spin numbers.
+#
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+    This template deploys an AutoScaling Launch Config and Group for Jira
+Parameters: 
+
+  PMServerEnv:
+    Description: "Server Environment name."
+    ConstraintDescription: "Choose an Environment from the drop down"
+    Type: "String"
+
+  PMDomainJira:
+    Description: "A reference to the Jira FQDN domain name"
+    Type: "String"
+
+  PMKeyName:
+    Description: "Enter an existing EC2 KeyPair. Default is MyEC2Key"
+    Type: "String"
+
+  PMJiraInstanceType: 
+    Description: "Enter an instance type. Default is t2.micro."
+    Type: "String"
+
+  PMPrivateSubnets:
+    Description: "Subnets to launch instances into"
+    Type: "List<AWS::EC2::Subnet::Id>"
+
+  PMMyJiraSG:
+    Description: "Select the Security Group to use for the EC2 hosts"
+    Type: "AWS::EC2::SecurityGroup::Id"
+
+  PMJiraLoadBalancer:
+    Description: "A reference to the Jira Load Balancer"
+    Type: "String"
+
+  PMS3Backup:
+    Description: "A reference to the S3 Bucket Backup"
+    Type: "String"
+
+  PMIAMS3CWInstanceProfile:
+    Description: "A reference to the IamInstanceProfile"
+    Type: "String"
+
+  PMRegionAMI:
+    Description: "A reference to the Region AMI"
+    Type: "String"
+
+  PMAutoscaleMin:
+    Description: "A reference to the MinSize"
+    Type: "String"
+
+  PMAutoscaleMax:
+    Description: "A reference to the MaxSize"
+    Type: "String"
+
+  PMAutoscaleDes:
+    Description: "A reference to the DesiredCapacity"
+    Type: "String"
+
+
+Resources:
+
+  # Auto Scaling Launch Configuration
+  JiraLaunchConfiguration:
+    Type: "AWS::AutoScaling::LaunchConfiguration"
+    Properties:
+      AssociatePublicIpAddress: "false"
+      KeyName:
+        Ref: "PMKeyName"
+      ImageId:
+        Ref: "PMRegionAMI"
+      InstanceType:
+        Ref: "PMJiraInstanceType"
+      IamInstanceProfile:
+        Ref: "PMIAMS3CWInstanceProfile"
+      SecurityGroups:
+      - Ref: "PMMyJiraSG"
+      BlockDeviceMappings:
+        # Root Mount Device
+        - DeviceName: "/dev/xvda"
+          Ebs:
+            # Increasing the volume size will actually cause to spin another
+            # ec2 instance and shut down the existing old volume
+            VolumeSize: "50" # Default: 8GB
+            VolumeType: "gp2"
+            #DeleteOnTermination: "false"
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          yum install nginx docker htop telnet git awslogs python-pip aws-cfn-bootstrap -y
+          yum update -y
+
+          echo "[plugins]
+          cwlogs = cwlogs
+          [default]
+          region = ${AWS::Region}" > /etc/awslogs/awscli.conf
+          service awslogs start
+          chkconfig awslogs on
+
+          # Install Nginx (redirect http to https)
+          mkdir -p /etc/nginx/sites-enabled
+          mkdir -p /etc/nginx/sites-available
+
+          echo "server {
+          listen 80;
+          server_name ${PMDomainJira};
+          if (\$http_x_forwarded_proto != \"https\") {
+          rewrite ^(.*)\$ https://${PMDomainJira}\$REQUEST_URI permanent;
+          }
+          }" > /etc/nginx/sites-available/${PMDomainJira}
+
+          ln -sf /etc/nginx/sites-available/${PMDomainJira} /etc/nginx/sites-enabled/
+
+          echo "proxy_redirect		off;
+          client_body_buffer_size	256K;
+          client_max_body_size	12m;
+          proxy_connect_timeout	600;
+          proxy_send_timeout	600;
+          proxy_read_timeout	600;
+          proxy_buffer_size	128k;
+          proxy_buffers		4 256k;
+          proxy_busy_buffers_size	256k;" > /etc/nginx/proxy.conf
+
+          echo "user nginx;
+          worker_processes auto;
+          pid /var/run/nginx.pid;
+       
+          events {
+          worker_connections 1024;
+          multi_accept on;
+          use epoll;
+          }
+       
+          worker_rlimit_nofile 100000;
+
+          http {
+
+          ##
+          # Basic Settings 
+          ##
+          sendfile on;
+          tcp_nopush on;
+          tcp_nodelay on;
+          keepalive_timeout 65;
+          types_hash_max_size 2048;
+          server_tokens off;
+         
+          include /etc/nginx/mime.types;
+          default_type application/octet-stream;
+         
+          # set client body size to 32M #
+          client_max_body_size 32M;
+
+          ##
+          # Logging Settings
+          ##
+          access_log /var/log/nginx/access.log;
+          error_log /var/log/nginx/error.log;
+         
+          ##
+          # Gzip Settings
+          ##
+          gzip on;
+          gzip_disable "msie6";
+          gzip_static on;
+          gzip_vary on;
+          gzip_proxied any;
+          gzip_comp_level 9;
+          gzip_buffers 16 8k;
+          gzip_http_version 1.1;
+          gzip_types text/plain text/css text/csv application/json application/javascript application/x-javascript image/x-icon text/xml application/xml application/xml+rss text/javascript;
+       
+          ##
+          # open_file_cache optimization
+          ##
+          open_file_cache max=200000 inactive=50s;
+          open_file_cache_valid 60s;
+          open_file_cache_min_uses 2;
+          open_file_cache_errors on;
+       
+          ##
+          # Virtual Host Configs
+          ##
+          include /etc/nginx/conf.d/*.conf;
+          include /etc/nginx/sites-enabled/*;
+          }" > /etc/nginx/nginx.conf
+
+          service nginx start
+          chkconfig nginx on
+
+          # Setup Jira
+          useradd -u 1000 jira
+          mkdir -p /home/jira/jira-data
+          
+          # Restore Jira Data if exist
+          /usr/bin/aws s3 sync --sse AES256 s3://${PMS3Backup}/ /home/jira/
+
+          chown -R jira:jira /home/jira/jira-data
+          chmod -R +x /home/jira/jira-data
+
+          service docker start
+          docker run -d -p 8000:8080 \
+          -v /home/jira/jira-data:/home/www/public_html/jira-data.server.com \
+          -e JIRASERVERNAME=${PMDomainJira} \
+          --name jira thinegan/debian-jira:latest
+
+          # Backup Jira Data. Sync every 5 minutes
+          echo '# Cron Upload' > /tmp/mycron
+          echo '*/5 * * * * /usr/bin/aws s3 sync --sse AES256 /home/jira/ s3://${PMS3Backup}/ > /var/log/jirasync.log 2>&1' >> /tmp/mycron
+          /usr/bin/crontab /tmp/mycron
+          rm -rf /tmp/mycron
+
+          /opt/aws/bin/cfn-signal -e 0 -r 'server setup complete' "${WaitHandleWEB}"  > /tmp/userdata.log
+
+  WaitHandleWEB:
+    Type: "AWS::CloudFormation::WaitConditionHandle"
+
+  WaitCondition:
+    Type: "AWS::CloudFormation::WaitCondition"
+    Properties:
+      Handle: !Ref "WaitHandleWEB"
+      Timeout: '600'
+
+  # Auto Scaling Group Basic Setup
+  JiraScalingGroup: 
+    Type: "AWS::AutoScaling::AutoScalingGroup"
+    Properties:
+      MinSize: !Ref "PMAutoscaleMin"
+      MaxSize: !Ref "PMAutoscaleMax"
+      DesiredCapacity: !Ref "PMAutoscaleDes"
+      LaunchConfigurationName:
+        Ref: "JiraLaunchConfiguration"
+      VPCZoneIdentifier:
+        Ref: "PMPrivateSubnets"
+      LoadBalancerNames:
+      - Ref: "PMJiraLoadBalancer"
+      HealthCheckGracePeriod: "300"
+      HealthCheckType: "ELB"
+      Tags:
+      - Key: "Name"
+        Value: !Sub "${PMServerEnv}-Jiraserver"
+        PropagateAtLaunch: 'true'
+
+Outputs:
+
+  JiraScalingGroup: 
+    Description: "Auto Scaling Group Reference ID"
+    Value: !Ref "JiraScalingGroup"
