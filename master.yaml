@@ -153,7 +153,6 @@ Resources:
         PMVPC: !GetAtt "MyVPC.Outputs.VPC"
         PMPublicNACL: !GetAtt "MyVPC.Outputs.MyPublicNetworkACL"
         PMPrivateNACL: !GetAtt "MyVPC.Outputs.MyPrivateNetworkACL"
-        PMNACL: !GetAtt "MyVPC.Outputs.MyNetworkACL"
 
   MyRDS:
     Type: "AWS::CloudFormation::Stack"

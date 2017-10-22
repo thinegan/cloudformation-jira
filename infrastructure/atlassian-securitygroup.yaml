@@ -23,10 +23,6 @@ Parameters:
     Description: "Please enter the IP range (CIDR notation) for this VPC"
     Type: "String"
 
-  PMNACL:
-    Description: "Refence Network ACL Id"
-    Type: "String"
-
   PMPublicNACL:
     Description: "Public Network ACL Id"
     Type: "String"

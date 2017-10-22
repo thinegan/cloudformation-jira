@@ -277,14 +277,6 @@ Resources:
         - Key: "Name"
           Value: !Sub "${PMServerEnv}-MyPrivateNetworkACL"
 
-  MyNetworkACL:
-    Type: "AWS::EC2::NetworkAcl"
-    Properties:
-      VpcId: !Ref "VPC"
-      Tags:
-        - Key: "Name"
-          Value: !Sub "${PMServerEnv}-MyNetworkACL"
-
 ######## Associate Public Subnet to Network ACL #######
   MyPublicSubnet1NetworkAclAssociation:
     Type: "AWS::EC2::SubnetNetworkAclAssociation"
@@ -319,10 +311,6 @@ Outputs:
     Value: !Ref "VPC"
     Export:
       Name: !Sub "${PMServerEnv}-VPC"
-
-  MyNetworkACL:
-    Description: "A reference to the Network ACL"
-    Value: !Ref "MyNetworkACL"
 
   MyPublicNetworkACL:
     Description: "A reference to the Public Network ACL"
