@@ -167,7 +167,7 @@ Resources:
       TimeoutInMinutes: '5'
       Parameters:
         PMServerEnv: !Ref "AWS::StackName"
-        DatabaseUser: "startupadmin" !Ref "PMDatabaseUsername"
+        DatabaseUser: !Ref "PMDatabaseUsername"
         DatabasePassword: !Ref "PMDatabasePassword"
         DatabaseName: !Sub "${AWS::StackName}jiradb"
         DatabaseSize: '5'
