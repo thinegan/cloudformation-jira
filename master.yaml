@@ -46,8 +46,12 @@ Parameters:
     Description: "Enter an sub domain prefix."
     Type: "String"
 
+  PMDatabaseUsername:
+    Description: "Enter DB username."
+    Type: "String"
+
   PMDatabasePassword:
-    Description: "Enter a password."
+    Description: "Enter DB password."
     Type: "String"
 
   PMJiraInstanceType: 
@@ -164,7 +168,7 @@ Resources:
       TimeoutInMinutes: '5'
       Parameters:
         PMServerEnv: !Ref "AWS::StackName"
-        DatabaseUser: "startupadmin"
+        DatabaseUser: "startupadmin" !Ref "PMDatabaseUsername"
         DatabasePassword: !Ref "PMDatabasePassword"
         DatabaseName: !Sub "${AWS::StackName}jiradb"
         DatabaseSize: '5'
