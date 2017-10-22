@@ -290,26 +290,26 @@ Resources:
     Type: "AWS::EC2::SubnetNetworkAclAssociation"
     Properties:
       SubnetId: !Ref "PublicSubnet1"
-      NetworkAclId: !Ref "MyPublicNetworkACL"
+      NetworkAclId: !Ref "MyNetworkACL"
 
   MyPublicSubnet2NetworkAclAssociation:
     Type: "AWS::EC2::SubnetNetworkAclAssociation"
     Properties:
       SubnetId: !Ref "PublicSubnet2"
-      NetworkAclId: !Ref "MyPublicNetworkACL"
+      NetworkAclId: !Ref "MyNetworkACL"
 
 ######## Associate Private Subnet to Network ACL #######
   MyPrivateSubnet1NetworkAclAssociation:
     Type: "AWS::EC2::SubnetNetworkAclAssociation"
     Properties:
       SubnetId: !Ref "PrivateSubnet1"
-      NetworkAclId: !Ref "MyPrivateNetworkACL"
+      NetworkAclId: !Ref "MyNetworkACL"
 
   MyPrivateSubnet2NetworkAclAssociation:
     Type: "AWS::EC2::SubnetNetworkAclAssociation"
     Properties:
       SubnetId: !Ref "PrivateSubnet2"
-      NetworkAclId: !Ref "MyPrivateNetworkACL"
+      NetworkAclId: !Ref "MyNetworkACL"
 
 
 Outputs: 
@@ -320,7 +320,11 @@ Outputs:
     Export:
       Name: !Sub "${PMServerEnv}-VPC"
 
-  MyPublicNetworkACL: 
+  MyNetworkACL:
+    Description: "A reference to the Network ACL"
+    Value: !Ref "MyNetworkACL"
+
+  MyPublicNetworkACL:
     Description: "A reference to the Public Network ACL"
     Value: !Ref "MyPublicNetworkACL"
 
