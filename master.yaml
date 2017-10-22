@@ -25,7 +25,6 @@ Parameters:
     Type: "String"
 
   PMKeyName:
-    Default: "mk2acc-nv"
     Description: "Enter an existing EC2 KeyPair. Default is mk2acc-nv."
     Type: "String" 
 
@@ -176,7 +175,7 @@ Resources:
         DatabaseInstanceClass: "db.t2.micro"
         PMRDSSG: !GetAtt "MySecurityGroup.Outputs.MyRDSSG"
         PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
-        PMDomainRds: !Sub "${AWS::StackName}-${DomainRdsPrefix}"
+        PMDomainRds: !Sub "${DomainRdsPrefix}"
         PMHostedZone: !Ref "PMHostedZone"
 
   MyJiraELB:
@@ -213,7 +212,7 @@ Resources:
         PMS3Backup: !GetAtt "MyS3Bucket.Outputs.S3Backup"
         PMIAMS3CWInstanceProfile: !GetAtt "MyIAMRole.Outputs.IAMS3CWInstanceProfile"
         PMPrivateSubnets: !GetAtt "MyVPC.Outputs.PrivateSubnets"
-        PMDomainJira: !Sub "${AWS::StackName}-${DomainJiraPrefix}"
+        PMDomainJira: !Sub "${DomainJiraPrefix}"
         PMAutoscaleMin: '1'
         PMAutoscaleMax: '1'
         PMAutoscaleDes: '1'
@@ -229,7 +228,7 @@ Resources:
       Parameters:
         PMJiraLBDNSName: !GetAtt "MyJiraELB.Outputs.JiraLBDNSName"
         PMJiraLBHostedZoneId: !GetAtt "MyJiraELB.Outputs.JiraLBHostedZoneId"
-        PMDomainJira: !Sub "${AWS::StackName}-${DomainJiraPrefix}"
+        PMDomainJira: !Sub "${DomainJiraPrefix}"
         PMHostedZone: !Ref "PMHostedZone"
 
 Outputs:
@@ -240,7 +239,7 @@ Outputs:
       Fn::Join:
         - ''
         - - "https://"
-          - !Sub "${AWS::StackName}-${DomainJiraPrefix}"
+          - !Sub "${DomainJiraPrefix}"
           - "/"
 
   RDSserver:
@@ -248,7 +247,7 @@ Outputs:
     Value:
       Fn::Join:
         - ''
-        - - !Sub "${AWS::StackName}-${DomainRdsPrefix}"
+        - - !Sub "${DomainRdsPrefix}"
           - ":3306"
 
   # Own Certs
