@@ -296,20 +296,20 @@ Resources:
     Type: "AWS::EC2::SubnetNetworkAclAssociation"
     Properties:
       SubnetId: !Ref "PublicSubnet2"
-      NetworkAclId: !Ref "MyPrivateNetworkACL"
+      NetworkAclId: !Ref "MyPublicNetworkACL"
 
 ######## Associate Private Subnet to Network ACL #######
   MyPrivateSubnet1NetworkAclAssociation:
     Type: "AWS::EC2::SubnetNetworkAclAssociation"
     Properties:
       SubnetId: !Ref "PrivateSubnet1"
-      NetworkAclId: !Ref "MyNetworkACL"
+      NetworkAclId: !Ref "MyPrivateNetworkACL"
 
   MyPrivateSubnet2NetworkAclAssociation:
     Type: "AWS::EC2::SubnetNetworkAclAssociation"
     Properties:
       SubnetId: !Ref "PrivateSubnet2"
-      NetworkAclId: !Ref "MyNetworkACL"
+      NetworkAclId: !Ref "MyPrivateNetworkACL"
 
 
 Outputs:
