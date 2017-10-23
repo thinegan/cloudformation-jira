@@ -123,7 +123,3 @@ Outputs:
   JiraLBHostedZoneId:
     Description: "The CanonicalHostedZoneNameID of the Jira Load Balancer"
     Value: !GetAtt "MyLoadBalancer.CanonicalHostedZoneNameID"
-
-
-
-

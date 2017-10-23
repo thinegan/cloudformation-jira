@@ -1,6 +1,5 @@
 # Note, the development RDS is not Multi-AZ supported
 # Only the production RDS is Multi-AZ supported
-# The default RDS Username/DBName/Password is for testing purpose only.
 #
 ---
 AWSTemplateFormatVersion: "2010-09-09"

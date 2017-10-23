@@ -1,7 +1,5 @@
-# Note, the development environment will only spin a min of 2 instance (HA Support)
-# The production environment will spin a min of 2 instance (HA support)
-# You can adjust the ASMIN, ASMAX, ASDES at the master.yaml file
-# to meet your instances spin numbers.
+# Note, Deploy docker thinegan/debian-jira:latest
+# Sync backup jira-data every 5 minutes.
 #
 ---
 AWSTemplateFormatVersion: "2010-09-09"
@@ -88,7 +86,6 @@ Resources:
             # ec2 instance and shut down the existing old volume
             VolumeSize: "50" # Default: 8GB
             VolumeType: "gp2"
-            #DeleteOnTermination: "false"
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash -xe
