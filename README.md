@@ -19,7 +19,7 @@ Before you can deploy this process, you need the following:
  - Installed Domain in Route 53.
  - Installed Certificate (in your selected region & also one in us-east-1) 
 
-## Tested launch this CloudFormation stack in the following Region:
+## Tested on the following Region:
  - US East (N. Virginia)
 
 ![infrastructure-overview](images/Multi-AZ_and_Self-Healing_Atlassian_Jira_with_Docker.png)
