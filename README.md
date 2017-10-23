@@ -1,4 +1,4 @@
-# Deploying Web Application Architecture with AWS
+# Deploying Multi-AZ and Self-Healing Atlassian Jira with Docker
 
 This reference architecture provides a set of YAML templates for deploying the following AWS services :
 - Amazon IAM
