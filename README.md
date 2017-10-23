@@ -92,9 +92,7 @@ Example using AWS CLI Command :
 
 
 ```
-Broken down into 2-Stages to avoid too much time consuming and a single process.
-Run Stage1 first before running Stage2, since Stage2 require export variable
-from Stage1. If you don't want to create Cloudfront, then you can avoid Stage2.
+Example Setup:
 
 Stage1 (~ 25 - 35 minutes)
 ===========================
@@ -102,59 +100,39 @@ To create a environment :
 aws cloudformation create-stack \
 --stack-name <env> \
 --capabilities=CAPABILITY_IAM \
---template-body file:////path_to_template//cloudformation-project1//master.yaml
+--template-body file:////path_to_template//cloudformation-jira//master.yaml
 
 To update a environment :
 aws cloudformation update-stack \
 --stack-name <env> \
 --capabilities=CAPABILITY_IAM \
---template-body file:////path_to_template//cloudformation-project1//master.yaml
+--template-body file:////path_to_template//cloudformation-jira//master.yaml
 
 To delete a environment :
 aws cloudformation delete-stack --stack-name <env>
 
 <env> - Note :stack-name that can be used are (dev, staging, prod)
 
-
-Stage2 (~ 35 - 45 minutes)
-===========================
-To create a environment :
-aws cloudformation create-stack \
---stack-name <envCDN> \
---capabilities=CAPABILITY_IAM \
---template-body file:////path_to_template//cloudformation-project1//infrastructure//webapp-cdn.yaml
-
-To update a environment :
-aws cloudformation update-stack \
---stack-name <envCDN> \
---capabilities=CAPABILITY_IAM \
---template-body file:////path_to_template//cloudformation-project1//infrastructure//webapp-cdn.yaml
-
-To delete a environment :
-aws cloudformation delete-stack --stack-name <envCDN>
-
-<envCDN> - Note :stack-name that can be used are (devCDN, stagingCDN, prodCDN)
-
-
 Example :
 aws cloudformation create-stack \
 --stack-name dev \
 --capabilities=CAPABILITY_IAM \
---template-body file:////path_to_template//cloudformation-project1//master.yaml
-
-aws cloudformation create-stack \
---stack-name devCDN \
---capabilities=CAPABILITY_IAM \
---template-body file:////path_to_template//cloudformation-project1//infrastructure//webapp-cdn.yaml
+--parameters ParameterKey=DomainJiraPrefix,ParameterValue=dev-jira.crytera.com \
+--parameters ParameterKey=DomainRdsPrefix,ParameterValue=dev-rds.crytera.com \
+--parameters ParameterKey=InstanceType,ParameterValue=t2.medium \
+--parameters ParameterKey=PMDatabasePassword,ParameterValue=xxxxxxx \
+--parameters ParameterKey=PMDatabaseUsername,ParameterValue=jirastartadmin \
+--parameters ParameterKey=PMHostedZone,ParameterValue=crytera.com \
+--parameters ParameterKey=PMKeyName_NV,ParameterValue=mykey_nv \
+--parameters ParameterKey=PMOWNIP,ParameterValue=192.xx.xx.xx/32 \
+--parameters ParameterKey=PMPrivateSubnet1CIDR,ParameterValue=10.0.3.0/24 \
+--parameters ParameterKey=PMPrivateSubnet2CIDR,ParameterValue=10.0.4.0/24 \
+--parameters ParameterKey=PMPublicSubnet1CIDR,ParameterValue=10.0.1.0/24 \
+--parameters ParameterKey=PMPublicSubnet2CIDR,ParameterValue=10.0.2.0/24 \
+--parameters ParameterKey=PMVpcCIDR,ParameterValue=10.0.0.0/16 \
+--template-body file:////path_to_template//cloudformation-jira//master.yaml
 	
 ```
-
-
-### Adjust the Auto Scaling parameters for ECS hosts and services
-
-The Auto Scaling group scaling policy provided by default launches and maintains a cluster of hosts distributed across two Availability Zones (min: 2, max: 2, desired: 2).
-
-As well as configuring Auto Scaling for the ECS hosts (your pool of compute), you can also configure scaling each individual ECS service. This can be useful if you want to run more instances of each container/task depending on the load or time of day (or a custom CloudWatch metric). To do this, you need to create [AWS::ApplicationAutoScaling::ScalingPolicy](http://docs.aws.amazon.com/pt_br/AWSCloudFormation/latest/UserGuide/aws-resource-applicationautoscaling-scalingpolicy.html) within your service template.
 
 ### Deploy multiple environments (e.g., dev, staging, production)
 
@@ -174,77 +152,13 @@ This set of templates deploys the following network design:
 
 You can adjust the following section of the [master.yaml](master.yaml) template:
 
-```
-# Update Domain Name
-PMHostedZone:
-  Default: "kasturicookies.com"
-  Description: "Enter an existing Hosted Zone."
-  Type: "String"
-
-# Update Sub-domain
-# Update Auto Scaling parameters (MIN,MAX,Desired)
-dev:
-  ASMIN: '2'
-  ASMAX: '2'
-  ASDES: '2'
-  WEBDOMAIN: "dev.kasturicookies.com"
-  CDNDOMAIN: "devel.kasturicookies.com"
-
-staging:
-  ASMIN: '2'
-  ASMAX: '2'
-  ASDES: '2'
-  WEBDOMAIN: "staging.kasturicookies.com"
-  CDNDOMAIN: "static.kasturicookies.com"
-
-prod:
-  ASMIN: '2'
-  ASMAX: '5'
-  ASDES: '2'
-  WEBDOMAIN: "www.kasturicookies.com"
-  CDNDOMAIN: "cdn.kasturicookies.com"
-
-# Update Uploaded SSL ARN
-CertARN: "arn:aws:acm:us-east-1:370888776060:certificate/eec1f4f2-2632-4d20-bd8a-fbfbcdb15920"
-
-# CIDR ranges
-VPC:
-  Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub ${TemplateLocation}/infrastructure/webapp-vpc.yaml
-      Parameters:
-        PMServerEnv:          !Ref "PMServerEnv"
-        PMVpcCIDR:            10.0.0.0/16
-        PMPublicSubnet1CIDR:  10.0.1.0/24
-        PMPublicSubnet2CIDR:  10.0.2.0/24
-        PMPrivateSubnet1CIDR: 10.0.3.0/24
-        PMPrivateSubnet2CIDR: 10.0.4.0/24
-
-# DB Config
-MyRDS:
-  Type: "AWS::CloudFormation::Stack"
-  DependsOn:
-  - "MySecurityGroup"
-  Properties:
-    TemplateURL: !Sub "${PMTemplateURL}/webapp-rds.yaml"
-    TimeoutInMinutes: '5'
-    Parameters:
-      DatabaseUser: "startupadmin"
-      DatabasePassword: "xxxxxxxx"
-      DatabaseName: !Sub "${AWS::StackName}db"
-      DatabaseSize: '5'
-      DatabaseEngine: "mysql"
-      DatabaseInstanceClass: "db.t2.micro"
-
-```
-
 ### Add a new item to this list
 
 If you found yourself wishing this set of frequently asked questions had an answer for a particular problem, please [submit a pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/). The chances are that others will also benefit from having the answer listed here.
 
 ## Contributing
 
-Please [create a new GitHub issue](https://github.com/thinegan/cloudformation-project1/issues/new) for any feature requests, bugs, or documentation improvements. 
+Please [create a new GitHub issue](https://github.com/thinegan/cloudformation-jira/issues/new) for any feature requests, bugs, or documentation improvements. 
 
 Where possible, please also [submit a pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/) for the change. 
 
